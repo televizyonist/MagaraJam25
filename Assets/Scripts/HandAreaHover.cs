@@ -18,12 +18,16 @@ public class HandAreaHover : MonoBehaviour, IPointerEnterHandler, IPointerExitHa
     private readonly List<RectTransform> _cardRects = new List<RectTransform>();
     private readonly List<Vector2> _velocity = new List<Vector2>();
 
+    private RectTransform _rectTransform;
     private bool _isHovered;
     private int _hoveredIndex = -1;
+    private int _activeCardIndex = -1;
     private float _nextHoverCheck;
+    private Camera _runtimeCamera;
 
     public void Awake()
     {
+        _rectTransform = GetComponent<RectTransform>();
         CacheCards();
     }
 
@@ -36,16 +40,20 @@ public class HandAreaHover : MonoBehaviour, IPointerEnterHandler, IPointerExitHa
     {
         _isHovered = true;
         _nextHoverCheck = 0f;
+        _runtimeCamera = ResolveCamera(eventData);
     }
 
     public void OnPointerExit(PointerEventData eventData)
     {
         _isHovered = false;
         _hoveredIndex = -1;
+        _activeCardIndex = -1;
+        _runtimeCamera = null;
     }
 
     public void OnPointerMove(PointerEventData eventData)
     {
+        _runtimeCamera = ResolveCamera(eventData);
         UpdateHoveredCard(eventData.position);
     }
 
@@ -83,19 +91,38 @@ public class HandAreaHover : MonoBehaviour, IPointerEnterHandler, IPointerExitHa
             _cardRects.Add(child);
             _velocity.Add(Vector2.zero);
         }
+
+        if (_cardRects.Count == 0)
+        {
+            _hoveredIndex = -1;
+            _activeCardIndex = -1;
+        }
+        else
+        {
+            _hoveredIndex = Mathf.Clamp(_hoveredIndex, -1, _cardRects.Count - 1);
+            _activeCardIndex = Mathf.Clamp(_activeCardIndex, -1, _cardRects.Count - 1);
+        }
     }
 
     private void UpdateHoveredCard(Vector2 pointerPosition)
     {
-        _hoveredIndex = -1;
-
-        for (int i = 0; i < _cardRects.Count; i++)
+        if (_cardRects.Count == 0)
         {
-            if (RectTransformUtility.RectangleContainsScreenPoint(_cardRects[i], pointerPosition, uiCamera))
-            {
-                _hoveredIndex = i;
-                break;
-            }
+            _hoveredIndex = -1;
+            _activeCardIndex = -1;
+            return;
+        }
+
+        int detectedIndex = DetermineHoveredCard(pointerPosition);
+
+        if (detectedIndex != -1)
+        {
+            _hoveredIndex = detectedIndex;
+            _activeCardIndex = detectedIndex;
+        }
+        else
+        {
+            _hoveredIndex = -1;
         }
     }
 
@@ -115,7 +142,8 @@ public class HandAreaHover : MonoBehaviour, IPointerEnterHandler, IPointerExitHa
             float targetX = startX + spacing * i;
             float targetY = 0f;
 
-            if (_isHovered && i == _hoveredIndex)
+            int raisedIndex = _isHovered ? _activeCardIndex : -1;
+            if (raisedIndex == i)
             {
                 targetY += hoverYOffset;
             }
@@ -129,5 +157,70 @@ public class HandAreaHover : MonoBehaviour, IPointerEnterHandler, IPointerExitHa
             card.anchoredPosition = newPosition;
             _velocity[i] = velocity;
         }
+    }
+
+    private int DetermineHoveredCard(Vector2 pointerPosition)
+    {
+        if (_rectTransform == null)
+        {
+            return -1;
+        }
+
+        Camera camera = uiCamera != null ? uiCamera : _runtimeCamera;
+        if (!RectTransformUtility.ScreenPointToLocalPointInRectangle(_rectTransform, pointerPosition, camera, out Vector2 localPoint))
+        {
+            return -1;
+        }
+
+        int closestIndex = -1;
+        float closestDistance = float.MaxValue;
+
+        for (int i = 0; i < _cardRects.Count; i++)
+        {
+            RectTransform card = _cardRects[i];
+            Vector2 cardPos = card.anchoredPosition;
+            Vector2 halfSize = card.rect.size * 0.5f;
+
+            float horizontalDelta = Mathf.Abs(localPoint.x - cardPos.x);
+            float verticalDelta = Mathf.Abs(localPoint.y - cardPos.y);
+
+            float verticalLimit = halfSize.y + hoverYOffset;
+
+            if (horizontalDelta <= halfSize.x && verticalDelta <= verticalLimit)
+            {
+                return i;
+            }
+
+            if (horizontalDelta < closestDistance)
+            {
+                closestDistance = horizontalDelta;
+                closestIndex = i;
+            }
+        }
+
+        return closestIndex;
+    }
+
+    private Camera ResolveCamera(PointerEventData eventData)
+    {
+        if (uiCamera != null)
+        {
+            return uiCamera;
+        }
+
+        if (eventData != null)
+        {
+            if (eventData.enterEventCamera != null)
+            {
+                return eventData.enterEventCamera;
+            }
+
+            if (eventData.pressEventCamera != null)
+            {
+                return eventData.pressEventCamera;
+            }
+        }
+
+        return null;
     }
 }
