@@ -46,7 +46,7 @@ public class CardDragHandler : MonoBehaviour, IBeginDragHandler, IDragHandler, I
         _originalAnchoredPosition = _rectTransform.anchoredPosition;
         _originalSlot = _currentSlot;
 
-        Vector3 pointerPosition = new Vector3(eventData.position.x, eventData.position.y, _rectTransform.position.z);
+        Vector3 pointerPosition = GetPointerWorldPosition(eventData);
         _dragOffset = _rectTransform.position - pointerPosition;
 
         _canvasGroup.blocksRaycasts = false;
@@ -60,7 +60,7 @@ public class CardDragHandler : MonoBehaviour, IBeginDragHandler, IDragHandler, I
 
     public void OnDrag(PointerEventData eventData)
     {
-        Vector3 pointerPosition = new Vector3(eventData.position.x, eventData.position.y, _rectTransform.position.z);
+        Vector3 pointerPosition = GetPointerWorldPosition(eventData);
         _rectTransform.position = pointerPosition + _dragOffset;
     }
 
@@ -111,4 +111,16 @@ public class CardDragHandler : MonoBehaviour, IBeginDragHandler, IDragHandler, I
     }
 
     public RectTransform RectTransform => _rectTransform;
+
+    private Vector3 GetPointerWorldPosition(PointerEventData eventData)
+    {
+        Vector3 worldPoint = _rectTransform.position;
+        Camera eventCamera = eventData.pressEventCamera ?? dragCanvas?.worldCamera;
+        if (RectTransformUtility.ScreenPointToWorldPointInRectangle(_rectTransform, eventData.position, eventCamera, out var result))
+        {
+            worldPoint = result;
+        }
+
+        return worldPoint;
+    }
 }
