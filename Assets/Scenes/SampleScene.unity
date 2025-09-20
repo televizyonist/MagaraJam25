@@ -393,7 +393,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5960789342781726645, guid: a40dac4228624a7db956ad525dc56202, type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: -5.23
+      value: -4.78
       objectReference: {fileID: 0}
     - target: {fileID: 5960789342781726645, guid: a40dac4228624a7db956ad525dc56202, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x
@@ -414,6 +414,14 @@ PrefabInstance:
     - target: {fileID: 7275409715227946938, guid: a40dac4228624a7db956ad525dc56202, type: 3}
       propertyPath: m_Name
       value: Hand Area
+      objectReference: {fileID: 0}
+    - target: {fileID: 9223372036854775807, guid: a40dac4228624a7db956ad525dc56202, type: 3}
+      propertyPath: uiCamera
+      value: 
+      objectReference: {fileID: 519420031}
+    - target: {fileID: 9223372036854775807, guid: a40dac4228624a7db956ad525dc56202, type: 3}
+      propertyPath: defaultSpacing
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
