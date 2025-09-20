@@ -311,6 +311,7 @@ public class SlotRelationshipDisplay : MonoBehaviour
             UpdateConnections();
             return;
         }
+    }
 
         if (_draggedCardDefinition == null)
         {
