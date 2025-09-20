@@ -191,7 +191,11 @@ public class SlotRelationshipDisplay : MonoBehaviour
                     }
                 }
             }
+
+            bool shouldGlow = highlightedSlots != null && highlightedSlots.Contains(slot);
+            slot.SetGlowActive(shouldGlow);
         }
+    }
 
         bool slotsHaveRelationship = !string.IsNullOrWhiteSpace(slotRelation);
         bool hoverProvidesRelationship = !string.IsNullOrWhiteSpace(hoverRelation);
@@ -209,6 +213,8 @@ public class SlotRelationshipDisplay : MonoBehaviour
         {
             SetConnectionText(connection, relationToDisplay);
         }
+
+        return shouldDisplayLabel;
     }
 
     private void UpdateSlotGlows(ISet<CardSlot> highlightedSlots)
