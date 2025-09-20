@@ -22,6 +22,8 @@ public class CardDragHandler : MonoBehaviour, IBeginDragHandler, IDragHandler, I
     private CardSlot _originalSlot;
     private CardSlot _currentSlot;
 
+    private bool _isDragging;
+
     private void Awake()
     {
         _rectTransform = GetComponent<RectTransform>();
@@ -41,6 +43,7 @@ public class CardDragHandler : MonoBehaviour, IBeginDragHandler, IDragHandler, I
 
     public void OnBeginDrag(PointerEventData eventData)
     {
+        _isDragging = true;
         _originalParent = _rectTransform.parent;
         _originalSiblingIndex = _rectTransform.GetSiblingIndex();
         _originalAnchoredPosition = _rectTransform.anchoredPosition;
@@ -66,6 +69,7 @@ public class CardDragHandler : MonoBehaviour, IBeginDragHandler, IDragHandler, I
 
     public void OnEndDrag(PointerEventData eventData)
     {
+        _isDragging = false;
         _canvasGroup.blocksRaycasts = true;
 
         CardSlot targetSlot = null;
@@ -139,6 +143,7 @@ public class CardDragHandler : MonoBehaviour, IBeginDragHandler, IDragHandler, I
     public Transform OriginalParent => _originalParent;
     public int OriginalSiblingIndex => _originalSiblingIndex;
     public Vector2 OriginalAnchoredPosition => _originalAnchoredPosition;
+    public bool IsDragging => _isDragging;
 
     private Vector3 GetPointerWorldPosition(PointerEventData eventData)
     {

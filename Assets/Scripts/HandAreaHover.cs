@@ -687,21 +687,50 @@ public class HandAreaHover : MonoBehaviour, IPointerEnterHandler, IPointerExitHa
         }
 
         float spacing = _isHovered ? expandedSpacing : defaultSpacing;
-        float totalWidth = spacing * (_cardRects.Count - 1);
-        float startX = -totalWidth * 0.5f;
-
+        int activeCount = 0;
         for (int i = 0; i < _cardRects.Count; i++)
         {
-            float targetX = startX + spacing * i;
+            if (!IsRectTransformBeingDragged(_cardRects[i]))
+            {
+                activeCount++;
+            }
+        }
+
+        if (activeCount == 0)
+        {
+            return;
+        }
+
+        float totalWidth = spacing * (activeCount - 1);
+        float startX = -totalWidth * 0.5f;
+
+        int raisedIndex = -1;
+        if (_isHovered && _activeCardIndex >= 0 && _activeCardIndex < _cardRects.Count)
+        {
+            RectTransform candidate = _cardRects[_activeCardIndex];
+            if (!IsRectTransformBeingDragged(candidate))
+            {
+                raisedIndex = _activeCardIndex;
+            }
+        }
+
+        int layoutIndex = 0;
+        for (int i = 0; i < _cardRects.Count; i++)
+        {
+            RectTransform card = _cardRects[i];
+            if (IsRectTransformBeingDragged(card))
+            {
+                continue;
+            }
+
+            float targetX = startX + spacing * layoutIndex;
             float targetY = 0f;
 
-            int raisedIndex = _isHovered ? _activeCardIndex : -1;
             if (raisedIndex == i)
             {
                 targetY += hoverYOffset;
             }
 
-            RectTransform card = _cardRects[i];
             Vector2 target = new Vector2(targetX, targetY);
             Vector2 current = card.anchoredPosition;
             Vector2 velocity = _velocity[i];
@@ -709,7 +738,20 @@ public class HandAreaHover : MonoBehaviour, IPointerEnterHandler, IPointerExitHa
             Vector2 newPosition = Vector2.SmoothDamp(current, target, ref velocity, positionSmoothTime, Mathf.Infinity, Time.unscaledDeltaTime);
             card.anchoredPosition = newPosition;
             _velocity[i] = velocity;
+
+            layoutIndex++;
         }
+    }
+
+    private static bool IsRectTransformBeingDragged(RectTransform rect)
+    {
+        if (rect == null)
+        {
+            return false;
+        }
+
+        CardDragHandler handler = rect.GetComponent<CardDragHandler>();
+        return handler != null && handler.IsDragging;
     }
 
     private int DetermineHoveredCard(Vector2 pointerPosition)
