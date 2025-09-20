@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 [RequireComponent(typeof(RectTransform))]
@@ -13,9 +14,6 @@ public class HandAreaHover : MonoBehaviour, IPointerEnterHandler, IPointerExitHa
 
     [Tooltip("Resource path used to load the relationship data json.")]
     public string relationshipsResourcePath = "Data/relationships";
-
-    [Tooltip("Resource path used to load the card preview prefab.")]
-    public string cardPreviewPrefabPath = "Prefabs/CardPreview";
 
     [Tooltip("Amount of cards that will be dealt to the player's hand when the game starts.")]
     public int startingHandSize = 10;
@@ -51,7 +49,6 @@ public class HandAreaHover : MonoBehaviour, IPointerEnterHandler, IPointerExitHa
     private readonly List<CharacterCardDefinition> _cardDefinitions = new List<CharacterCardDefinition>();
 
     private GameObject _cardPrefab;
-    private GameObject _cardPreviewPrefab;
     private System.Random _random;
     private bool _cardsInitialized;
     private bool _initializationInProgress;
@@ -63,7 +60,6 @@ public class HandAreaHover : MonoBehaviour, IPointerEnterHandler, IPointerExitHa
     private float _nextHoverCheck;
     private Camera _runtimeCamera;
     private Transform _cachedParent;
-    private RectTransform _runtimePreviewContainer;
     private CardView _previewCardView;
     private RectTransform _previewRectTransform;
     private CharacterCardDefinition _activePreviewDefinition;
@@ -76,7 +72,6 @@ public class HandAreaHover : MonoBehaviour, IPointerEnterHandler, IPointerExitHa
         InitializeCards();
         CacheCards();
         EnsureTopmost();
-        LoadCardPreviewPrefab();
     }
 
     public void OnEnable()
@@ -192,7 +187,6 @@ public class HandAreaHover : MonoBehaviour, IPointerEnterHandler, IPointerExitHa
 
             EnsureDeckContainer();
             LoadCardPrefab();
-            LoadCardPreviewPrefab();
             LoadCardDefinitions();
 
             if (_cardDefinitions.Count == 0)
@@ -261,27 +255,6 @@ public class HandAreaHover : MonoBehaviour, IPointerEnterHandler, IPointerExitHa
         if (_cardPrefab == null)
         {
             Debug.LogError($"Card prefab could not be loaded from Resources/{cardPrefabResourcePath}.");
-        }
-    }
-
-    private void LoadCardPreviewPrefab()
-    {
-        if (_cardPreviewPrefab != null)
-        {
-            return;
-        }
-
-        if (string.IsNullOrWhiteSpace(cardPreviewPrefabPath))
-        {
-            Debug.LogError("Card preview prefab resource path is empty.");
-            return;
-        }
-
-        _cardPreviewPrefab = Resources.Load<GameObject>(cardPreviewPrefabPath);
-
-        if (_cardPreviewPrefab == null)
-        {
-            Debug.LogError($"Card preview prefab could not be loaded from Resources/{cardPreviewPrefabPath}.");
         }
     }
 
@@ -470,39 +443,12 @@ public class HandAreaHover : MonoBehaviour, IPointerEnterHandler, IPointerExitHa
 
     private RectTransform ResolvePreviewContainer()
     {
-        if (previewContainer != null)
+        if (previewContainer == null)
         {
-            return previewContainer;
+            previewContainer = FindPreviewContainerInScene();
         }
 
-        if (_runtimePreviewContainer != null)
-        {
-            return _runtimePreviewContainer;
-        }
-
-        var containerObject = new GameObject("CardPreviewContainer", typeof(RectTransform));
-        _runtimePreviewContainer = containerObject.GetComponent<RectTransform>();
-
-        Transform parent = _rectTransform != null && _rectTransform.parent != null
-            ? _rectTransform.parent
-            : transform.parent;
-
-        if (parent != null)
-        {
-            _runtimePreviewContainer.SetParent(parent, false);
-        }
-        else
-        {
-            _runtimePreviewContainer.SetParent(transform, false);
-        }
-
-        _runtimePreviewContainer.anchorMin = new Vector2(0.5f, 0.5f);
-        _runtimePreviewContainer.anchorMax = new Vector2(0.5f, 0.5f);
-        _runtimePreviewContainer.pivot = new Vector2(0.5f, 0.5f);
-        _runtimePreviewContainer.anchoredPosition = Vector2.zero;
-        _runtimePreviewContainer.sizeDelta = Vector2.zero;
-
-        return _runtimePreviewContainer;
+        return previewContainer;
     }
 
     private CardView EnsurePreviewInstance()
@@ -513,27 +459,17 @@ public class HandAreaHover : MonoBehaviour, IPointerEnterHandler, IPointerExitHa
             return _previewCardView;
         }
 
-        LoadCardPreviewPrefab();
-
-        if (_cardPreviewPrefab == null)
-        {
-            return null;
-        }
-
         RectTransform container = ResolvePreviewContainer();
         if (container == null)
         {
             return null;
         }
 
-        GameObject previewObject = Instantiate(_cardPreviewPrefab, container);
-        previewObject.name = "CardPreview";
-
-        _previewRectTransform = previewObject.transform as RectTransform;
+        _previewRectTransform = container;
         ApplyPreviewTransform();
 
         CardDragHandler referenceHandler = null;
-        var dragHandlers = previewObject.GetComponentsInChildren<CardDragHandler>(true);
+        var dragHandlers = container.GetComponentsInChildren<CardDragHandler>(true);
         foreach (CardDragHandler handler in dragHandlers)
         {
             if (handler != null)
@@ -546,7 +482,7 @@ public class HandAreaHover : MonoBehaviour, IPointerEnterHandler, IPointerExitHa
             }
         }
 
-        var raycasters = previewObject.GetComponentsInChildren<GraphicRaycaster>(true);
+        var raycasters = container.GetComponentsInChildren<GraphicRaycaster>(true);
         foreach (GraphicRaycaster raycaster in raycasters)
         {
             if (raycaster != null)
@@ -555,20 +491,20 @@ public class HandAreaHover : MonoBehaviour, IPointerEnterHandler, IPointerExitHa
             }
         }
 
-        CanvasGroup group = previewObject.GetComponent<CanvasGroup>();
+        CanvasGroup group = container.GetComponent<CanvasGroup>();
         if (group == null)
         {
-            group = previewObject.AddComponent<CanvasGroup>();
+            group = container.gameObject.AddComponent<CanvasGroup>();
         }
 
         group.interactable = false;
         group.blocksRaycasts = false;
         group.alpha = 1f;
 
-        _previewCardView = previewObject.GetComponentInChildren<CardView>(true);
+        _previewCardView = container.GetComponentInChildren<CardView>(true);
         if (_previewCardView == null)
         {
-            Transform targetTransform = referenceHandler != null ? referenceHandler.transform : previewObject.transform;
+            Transform targetTransform = referenceHandler != null ? referenceHandler.transform : container.transform;
             _previewCardView = targetTransform.GetComponent<CardView>();
             if (_previewCardView == null)
             {
@@ -576,8 +512,51 @@ public class HandAreaHover : MonoBehaviour, IPointerEnterHandler, IPointerExitHa
             }
         }
 
-        previewObject.SetActive(false);
+        container.gameObject.SetActive(false);
         return _previewCardView;
+    }
+
+    private RectTransform FindPreviewContainerInScene()
+    {
+        if (!gameObject.scene.IsValid())
+        {
+            return null;
+        }
+
+        foreach (GameObject rootObject in gameObject.scene.GetRootGameObjects())
+        {
+            RectTransform candidate = FindPreviewContainerRecursive(rootObject.transform);
+            if (candidate != null)
+            {
+                return candidate;
+            }
+        }
+
+        return null;
+    }
+
+    private RectTransform FindPreviewContainerRecursive(Transform current)
+    {
+        if (current == null)
+        {
+            return null;
+        }
+
+        if (string.Equals(current.name, "CardPreview", StringComparison.Ordinal))
+        {
+            return current as RectTransform;
+        }
+
+        for (int i = 0; i < current.childCount; i++)
+        {
+            RectTransform found = FindPreviewContainerRecursive(current.GetChild(i));
+            if (found != null)
+            {
+                return found;
+            }
+        }
+
+        return null;
     }
 
     private void ApplyPreviewTransform()
