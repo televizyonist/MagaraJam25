@@ -36,6 +36,11 @@ public class HandAreaHover : MonoBehaviour, IPointerEnterHandler, IPointerExitHa
         CacheCards();
     }
 
+    private void OnTransformChildrenChanged()
+    {
+        CacheCards();
+    }
+
     public void OnPointerEnter(PointerEventData eventData)
     {
         _isHovered = true;
