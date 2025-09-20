@@ -781,6 +781,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 6441021935001613678, guid: a5364a716ff173a4f8424305f316e846, type: 3}
+      propertyPath: m_LayerOverridePriority
+      value: -10
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -1415,10 +1419,10 @@ SceneRoots:
   m_Roots:
   - {fileID: 519420032}
   - {fileID: 1810620525}
+  - {fileID: 497992970}
   - {fileID: 1561200548}
   - {fileID: 76808444}
   - {fileID: 1916618471}
   - {fileID: 780948761}
   - {fileID: 1943669359}
   - {fileID: 2082562011}
-  - {fileID: 497992970}
