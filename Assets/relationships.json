@@ -1,0 +1,1105 @@
+{
+  "characters": [
+    {
+      "id": "P01",
+      "name": "Ahmet",
+      "families": [
+        "A"
+      ],
+      "relationships": [
+        {
+          "targetId": "P04",
+          "targetName": "Cemre",
+          "relation": "Akraba"
+        },
+        {
+          "targetId": "P07",
+          "targetName": "Mustafa",
+          "relation": "Akraba"
+        },
+        {
+          "targetId": "P08",
+          "targetName": "Fatma",
+          "relation": "Akraba"
+        },
+        {
+          "targetId": "P09",
+          "targetName": "Burak",
+          "relation": "Akraba"
+        },
+        {
+          "targetId": "P10",
+          "targetName": "Zeynep",
+          "relation": "Akraba"
+        },
+        {
+          "targetId": "P11",
+          "targetName": "Çınar",
+          "relation": "Akraba"
+        },
+        {
+          "targetId": "P03",
+          "targetName": "Mehmet",
+          "relation": "Evlat"
+        },
+        {
+          "targetId": "P05",
+          "targetName": "Elif",
+          "relation": "Evlat"
+        },
+        {
+          "targetId": "P06",
+          "targetName": "Murat",
+          "relation": "Evlat"
+        },
+        {
+          "targetId": "P02",
+          "targetName": "Ayşe",
+          "relation": "Eş"
+        }
+      ]
+    },
+    {
+      "id": "P02",
+      "name": "Ayşe",
+      "families": [
+        "A"
+      ],
+      "relationships": [
+        {
+          "targetId": "P04",
+          "targetName": "Cemre",
+          "relation": "Akraba"
+        },
+        {
+          "targetId": "P07",
+          "targetName": "Mustafa",
+          "relation": "Akraba"
+        },
+        {
+          "targetId": "P08",
+          "targetName": "Fatma",
+          "relation": "Akraba"
+        },
+        {
+          "targetId": "P09",
+          "targetName": "Burak",
+          "relation": "Akraba"
+        },
+        {
+          "targetId": "P10",
+          "targetName": "Zeynep",
+          "relation": "Akraba"
+        },
+        {
+          "targetId": "P11",
+          "targetName": "Çınar",
+          "relation": "Akraba"
+        },
+        {
+          "targetId": "P03",
+          "targetName": "Mehmet",
+          "relation": "Evlat"
+        },
+        {
+          "targetId": "P05",
+          "targetName": "Elif",
+          "relation": "Evlat"
+        },
+        {
+          "targetId": "P06",
+          "targetName": "Murat",
+          "relation": "Evlat"
+        },
+        {
+          "targetId": "P01",
+          "targetName": "Ahmet",
+          "relation": "Eş"
+        }
+      ]
+    },
+    {
+      "id": "P03",
+      "name": "Mehmet",
+      "families": [
+        "A"
+      ],
+      "relationships": [
+        {
+          "targetId": "P07",
+          "targetName": "Mustafa",
+          "relation": "Akraba"
+        },
+        {
+          "targetId": "P08",
+          "targetName": "Fatma",
+          "relation": "Akraba"
+        },
+        {
+          "targetId": "P09",
+          "targetName": "Burak",
+          "relation": "Akraba"
+        },
+        {
+          "targetId": "P10",
+          "targetName": "Zeynep",
+          "relation": "Akraba"
+        },
+        {
+          "targetId": "P11",
+          "targetName": "Çınar",
+          "relation": "Akraba"
+        },
+        {
+          "targetId": "P02",
+          "targetName": "Ayşe",
+          "relation": "Anne"
+        },
+        {
+          "targetId": "P09",
+          "targetName": "Burak",
+          "relation": "Arkadaş"
+        },
+        {
+          "targetId": "P17",
+          "targetName": "Sevda",
+          "relation": "Arkadaş"
+        },
+        {
+          "targetId": "P01",
+          "targetName": "Ahmet",
+          "relation": "Baba"
+        },
+        {
+          "targetId": "P04",
+          "targetName": "Cemre",
+          "relation": "Eş"
+        },
+        {
+          "targetId": "P05",
+          "targetName": "Elif",
+          "relation": "Kardeş"
+        },
+        {
+          "targetId": "P06",
+          "targetName": "Murat",
+          "relation": "Kardeş"
+        }
+      ]
+    },
+    {
+      "id": "P04",
+      "name": "Cemre",
+      "families": [
+        "A",
+        "B"
+      ],
+      "relationships": [
+        {
+          "targetId": "P01",
+          "targetName": "Ahmet",
+          "relation": "Akraba"
+        },
+        {
+          "targetId": "P02",
+          "targetName": "Ayşe",
+          "relation": "Akraba"
+        },
+        {
+          "targetId": "P05",
+          "targetName": "Elif",
+          "relation": "Akraba"
+        },
+        {
+          "targetId": "P06",
+          "targetName": "Murat",
+          "relation": "Akraba"
+        },
+        {
+          "targetId": "P11",
+          "targetName": "Çınar",
+          "relation": "Akraba"
+        },
+        {
+          "targetId": "P08",
+          "targetName": "Fatma",
+          "relation": "Anne"
+        },
+        {
+          "targetId": "P07",
+          "targetName": "Mustafa",
+          "relation": "Baba"
+        },
+        {
+          "targetId": "P03",
+          "targetName": "Mehmet",
+          "relation": "Eş"
+        },
+        {
+          "targetId": "P09",
+          "targetName": "Burak",
+          "relation": "Kardeş"
+        }
+      ]
+    },
+    {
+      "id": "P05",
+      "name": "Elif",
+      "families": [
+        "A"
+      ],
+      "relationships": [
+        {
+          "targetId": "P04",
+          "targetName": "Cemre",
+          "relation": "Akraba"
+        },
+        {
+          "targetId": "P07",
+          "targetName": "Mustafa",
+          "relation": "Akraba"
+        },
+        {
+          "targetId": "P08",
+          "targetName": "Fatma",
+          "relation": "Akraba"
+        },
+        {
+          "targetId": "P09",
+          "targetName": "Burak",
+          "relation": "Akraba"
+        },
+        {
+          "targetId": "P10",
+          "targetName": "Zeynep",
+          "relation": "Akraba"
+        },
+        {
+          "targetId": "P11",
+          "targetName": "Çınar",
+          "relation": "Akraba"
+        },
+        {
+          "targetId": "P02",
+          "targetName": "Ayşe",
+          "relation": "Anne"
+        },
+        {
+          "targetId": "P19",
+          "targetName": "Can",
+          "relation": "Arkadaş"
+        },
+        {
+          "targetId": "P01",
+          "targetName": "Ahmet",
+          "relation": "Baba"
+        },
+        {
+          "targetId": "P03",
+          "targetName": "Mehmet",
+          "relation": "Kardeş"
+        },
+        {
+          "targetId": "P06",
+          "targetName": "Murat",
+          "relation": "Kardeş"
+        }
+      ]
+    },
+    {
+      "id": "P06",
+      "name": "Murat",
+      "families": [
+        "A"
+      ],
+      "relationships": [
+        {
+          "targetId": "P04",
+          "targetName": "Cemre",
+          "relation": "Akraba"
+        },
+        {
+          "targetId": "P07",
+          "targetName": "Mustafa",
+          "relation": "Akraba"
+        },
+        {
+          "targetId": "P08",
+          "targetName": "Fatma",
+          "relation": "Akraba"
+        },
+        {
+          "targetId": "P09",
+          "targetName": "Burak",
+          "relation": "Akraba"
+        },
+        {
+          "targetId": "P10",
+          "targetName": "Zeynep",
+          "relation": "Akraba"
+        },
+        {
+          "targetId": "P11",
+          "targetName": "Çınar",
+          "relation": "Akraba"
+        },
+        {
+          "targetId": "P02",
+          "targetName": "Ayşe",
+          "relation": "Anne"
+        },
+        {
+          "targetId": "P15",
+          "targetName": "Deniz",
+          "relation": "Arkadaş"
+        },
+        {
+          "targetId": "P01",
+          "targetName": "Ahmet",
+          "relation": "Baba"
+        },
+        {
+          "targetId": "P03",
+          "targetName": "Mehmet",
+          "relation": "Kardeş"
+        },
+        {
+          "targetId": "P05",
+          "targetName": "Elif",
+          "relation": "Kardeş"
+        }
+      ]
+    },
+    {
+      "id": "P07",
+      "name": "Mustafa",
+      "families": [
+        "B"
+      ],
+      "relationships": [
+        {
+          "targetId": "P01",
+          "targetName": "Ahmet",
+          "relation": "Akraba"
+        },
+        {
+          "targetId": "P02",
+          "targetName": "Ayşe",
+          "relation": "Akraba"
+        },
+        {
+          "targetId": "P03",
+          "targetName": "Mehmet",
+          "relation": "Akraba"
+        },
+        {
+          "targetId": "P05",
+          "targetName": "Elif",
+          "relation": "Akraba"
+        },
+        {
+          "targetId": "P06",
+          "targetName": "Murat",
+          "relation": "Akraba"
+        },
+        {
+          "targetId": "P04",
+          "targetName": "Cemre",
+          "relation": "Evlat"
+        },
+        {
+          "targetId": "P09",
+          "targetName": "Burak",
+          "relation": "Evlat"
+        },
+        {
+          "targetId": "P08",
+          "targetName": "Fatma",
+          "relation": "Eş"
+        }
+      ]
+    },
+    {
+      "id": "P08",
+      "name": "Fatma",
+      "families": [
+        "B"
+      ],
+      "relationships": [
+        {
+          "targetId": "P01",
+          "targetName": "Ahmet",
+          "relation": "Akraba"
+        },
+        {
+          "targetId": "P02",
+          "targetName": "Ayşe",
+          "relation": "Akraba"
+        },
+        {
+          "targetId": "P03",
+          "targetName": "Mehmet",
+          "relation": "Akraba"
+        },
+        {
+          "targetId": "P05",
+          "targetName": "Elif",
+          "relation": "Akraba"
+        },
+        {
+          "targetId": "P06",
+          "targetName": "Murat",
+          "relation": "Akraba"
+        },
+        {
+          "targetId": "P04",
+          "targetName": "Cemre",
+          "relation": "Evlat"
+        },
+        {
+          "targetId": "P09",
+          "targetName": "Burak",
+          "relation": "Evlat"
+        },
+        {
+          "targetId": "P07",
+          "targetName": "Mustafa",
+          "relation": "Eş"
+        }
+      ]
+    },
+    {
+      "id": "P09",
+      "name": "Burak",
+      "families": [
+        "B"
+      ],
+      "relationships": [
+        {
+          "targetId": "P01",
+          "targetName": "Ahmet",
+          "relation": "Akraba"
+        },
+        {
+          "targetId": "P02",
+          "targetName": "Ayşe",
+          "relation": "Akraba"
+        },
+        {
+          "targetId": "P03",
+          "targetName": "Mehmet",
+          "relation": "Akraba"
+        },
+        {
+          "targetId": "P05",
+          "targetName": "Elif",
+          "relation": "Akraba"
+        },
+        {
+          "targetId": "P06",
+          "targetName": "Murat",
+          "relation": "Akraba"
+        },
+        {
+          "targetId": "P08",
+          "targetName": "Fatma",
+          "relation": "Anne"
+        },
+        {
+          "targetId": "P03",
+          "targetName": "Mehmet",
+          "relation": "Arkadaş"
+        },
+        {
+          "targetId": "P07",
+          "targetName": "Mustafa",
+          "relation": "Baba"
+        },
+        {
+          "targetId": "P11",
+          "targetName": "Çınar",
+          "relation": "Evlat"
+        },
+        {
+          "targetId": "P10",
+          "targetName": "Zeynep",
+          "relation": "Eş"
+        },
+        {
+          "targetId": "P04",
+          "targetName": "Cemre",
+          "relation": "Kardeş"
+        }
+      ]
+    },
+    {
+      "id": "P10",
+      "name": "Zeynep",
+      "families": [
+        "B"
+      ],
+      "relationships": [
+        {
+          "targetId": "P01",
+          "targetName": "Ahmet",
+          "relation": "Akraba"
+        },
+        {
+          "targetId": "P02",
+          "targetName": "Ayşe",
+          "relation": "Akraba"
+        },
+        {
+          "targetId": "P03",
+          "targetName": "Mehmet",
+          "relation": "Akraba"
+        },
+        {
+          "targetId": "P05",
+          "targetName": "Elif",
+          "relation": "Akraba"
+        },
+        {
+          "targetId": "P06",
+          "targetName": "Murat",
+          "relation": "Akraba"
+        },
+        {
+          "targetId": "P11",
+          "targetName": "Çınar",
+          "relation": "Evlat"
+        },
+        {
+          "targetId": "P09",
+          "targetName": "Burak",
+          "relation": "Eş"
+        }
+      ]
+    },
+    {
+      "id": "P11",
+      "name": "Çınar",
+      "families": [
+        "B"
+      ],
+      "relationships": [
+        {
+          "targetId": "P01",
+          "targetName": "Ahmet",
+          "relation": "Akraba"
+        },
+        {
+          "targetId": "P02",
+          "targetName": "Ayşe",
+          "relation": "Akraba"
+        },
+        {
+          "targetId": "P03",
+          "targetName": "Mehmet",
+          "relation": "Akraba"
+        },
+        {
+          "targetId": "P04",
+          "targetName": "Cemre",
+          "relation": "Akraba"
+        },
+        {
+          "targetId": "P05",
+          "targetName": "Elif",
+          "relation": "Akraba"
+        },
+        {
+          "targetId": "P06",
+          "targetName": "Murat",
+          "relation": "Akraba"
+        },
+        {
+          "targetId": "P10",
+          "targetName": "Zeynep",
+          "relation": "Anne"
+        },
+        {
+          "targetId": "P16",
+          "targetName": "Melis",
+          "relation": "Arkadaş"
+        },
+        {
+          "targetId": "P09",
+          "targetName": "Burak",
+          "relation": "Baba"
+        }
+      ]
+    },
+    {
+      "id": "P12",
+      "name": "Emine",
+      "families": [
+        "C"
+      ],
+      "relationships": [
+        {
+          "targetId": "P14",
+          "targetName": "Derya",
+          "relation": "Akraba"
+        },
+        {
+          "targetId": "P15",
+          "targetName": "Deniz",
+          "relation": "Akraba"
+        },
+        {
+          "targetId": "P16",
+          "targetName": "Melis",
+          "relation": "Akraba"
+        },
+        {
+          "targetId": "P18",
+          "targetName": "Mert",
+          "relation": "Akraba"
+        },
+        {
+          "targetId": "P20",
+          "targetName": "Efe",
+          "relation": "Akraba"
+        },
+        {
+          "targetId": "P13",
+          "targetName": "Ayhan",
+          "relation": "Evlat"
+        },
+        {
+          "targetId": "P17",
+          "targetName": "Sevda",
+          "relation": "Evlat"
+        },
+        {
+          "targetId": "P19",
+          "targetName": "Can",
+          "relation": "Evlat"
+        }
+      ]
+    },
+    {
+      "id": "P13",
+      "name": "Ayhan",
+      "families": [
+        "C"
+      ],
+      "relationships": [
+        {
+          "targetId": "P14",
+          "targetName": "Derya",
+          "relation": "Akraba"
+        },
+        {
+          "targetId": "P15",
+          "targetName": "Deniz",
+          "relation": "Akraba"
+        },
+        {
+          "targetId": "P16",
+          "targetName": "Melis",
+          "relation": "Akraba"
+        },
+        {
+          "targetId": "P18",
+          "targetName": "Mert",
+          "relation": "Akraba"
+        },
+        {
+          "targetId": "P20",
+          "targetName": "Efe",
+          "relation": "Akraba"
+        },
+        {
+          "targetId": "P12",
+          "targetName": "Emine",
+          "relation": "Anne"
+        },
+        {
+          "targetId": "P15",
+          "targetName": "Deniz",
+          "relation": "Evlat"
+        },
+        {
+          "targetId": "P16",
+          "targetName": "Melis",
+          "relation": "Evlat"
+        },
+        {
+          "targetId": "P14",
+          "targetName": "Derya",
+          "relation": "Eş"
+        },
+        {
+          "targetId": "P17",
+          "targetName": "Sevda",
+          "relation": "Kardeş"
+        },
+        {
+          "targetId": "P19",
+          "targetName": "Can",
+          "relation": "Kardeş"
+        }
+      ]
+    },
+    {
+      "id": "P14",
+      "name": "Derya",
+      "families": [
+        "C"
+      ],
+      "relationships": [
+        {
+          "targetId": "P12",
+          "targetName": "Emine",
+          "relation": "Akraba"
+        },
+        {
+          "targetId": "P13",
+          "targetName": "Ayhan",
+          "relation": "Akraba"
+        },
+        {
+          "targetId": "P17",
+          "targetName": "Sevda",
+          "relation": "Akraba"
+        },
+        {
+          "targetId": "P19",
+          "targetName": "Can",
+          "relation": "Akraba"
+        },
+        {
+          "targetId": "P20",
+          "targetName": "Efe",
+          "relation": "Akraba"
+        },
+        {
+          "targetId": "P15",
+          "targetName": "Deniz",
+          "relation": "Evlat"
+        },
+        {
+          "targetId": "P16",
+          "targetName": "Melis",
+          "relation": "Evlat"
+        },
+        {
+          "targetId": "P13",
+          "targetName": "Ayhan",
+          "relation": "Eş"
+        }
+      ]
+    },
+    {
+      "id": "P15",
+      "name": "Deniz",
+      "families": [
+        "C"
+      ],
+      "relationships": [
+        {
+          "targetId": "P12",
+          "targetName": "Emine",
+          "relation": "Akraba"
+        },
+        {
+          "targetId": "P13",
+          "targetName": "Ayhan",
+          "relation": "Akraba"
+        },
+        {
+          "targetId": "P17",
+          "targetName": "Sevda",
+          "relation": "Akraba"
+        },
+        {
+          "targetId": "P19",
+          "targetName": "Can",
+          "relation": "Akraba"
+        },
+        {
+          "targetId": "P20",
+          "targetName": "Efe",
+          "relation": "Akraba"
+        },
+        {
+          "targetId": "P14",
+          "targetName": "Derya",
+          "relation": "Anne"
+        },
+        {
+          "targetId": "P06",
+          "targetName": "Murat",
+          "relation": "Arkadaş"
+        },
+        {
+          "targetId": "P13",
+          "targetName": "Ayhan",
+          "relation": "Baba"
+        },
+        {
+          "targetId": "P16",
+          "targetName": "Melis",
+          "relation": "Kardeş"
+        }
+      ]
+    },
+    {
+      "id": "P16",
+      "name": "Melis",
+      "families": [
+        "C"
+      ],
+      "relationships": [
+        {
+          "targetId": "P12",
+          "targetName": "Emine",
+          "relation": "Akraba"
+        },
+        {
+          "targetId": "P13",
+          "targetName": "Ayhan",
+          "relation": "Akraba"
+        },
+        {
+          "targetId": "P17",
+          "targetName": "Sevda",
+          "relation": "Akraba"
+        },
+        {
+          "targetId": "P19",
+          "targetName": "Can",
+          "relation": "Akraba"
+        },
+        {
+          "targetId": "P20",
+          "targetName": "Efe",
+          "relation": "Akraba"
+        },
+        {
+          "targetId": "P14",
+          "targetName": "Derya",
+          "relation": "Anne"
+        },
+        {
+          "targetId": "P11",
+          "targetName": "Çınar",
+          "relation": "Arkadaş"
+        },
+        {
+          "targetId": "P13",
+          "targetName": "Ayhan",
+          "relation": "Baba"
+        },
+        {
+          "targetId": "P15",
+          "targetName": "Deniz",
+          "relation": "Kardeş"
+        }
+      ]
+    },
+    {
+      "id": "P17",
+      "name": "Sevda",
+      "families": [
+        "C"
+      ],
+      "relationships": [
+        {
+          "targetId": "P14",
+          "targetName": "Derya",
+          "relation": "Akraba"
+        },
+        {
+          "targetId": "P15",
+          "targetName": "Deniz",
+          "relation": "Akraba"
+        },
+        {
+          "targetId": "P16",
+          "targetName": "Melis",
+          "relation": "Akraba"
+        },
+        {
+          "targetId": "P18",
+          "targetName": "Mert",
+          "relation": "Akraba"
+        },
+        {
+          "targetId": "P12",
+          "targetName": "Emine",
+          "relation": "Anne"
+        },
+        {
+          "targetId": "P03",
+          "targetName": "Mehmet",
+          "relation": "Arkadaş"
+        },
+        {
+          "targetId": "P20",
+          "targetName": "Efe",
+          "relation": "Evlat"
+        },
+        {
+          "targetId": "P18",
+          "targetName": "Mert",
+          "relation": "Eş"
+        },
+        {
+          "targetId": "P13",
+          "targetName": "Ayhan",
+          "relation": "Kardeş"
+        },
+        {
+          "targetId": "P19",
+          "targetName": "Can",
+          "relation": "Kardeş"
+        }
+      ]
+    },
+    {
+      "id": "P18",
+      "name": "Mert",
+      "families": [
+        "C"
+      ],
+      "relationships": [
+        {
+          "targetId": "P12",
+          "targetName": "Emine",
+          "relation": "Akraba"
+        },
+        {
+          "targetId": "P13",
+          "targetName": "Ayhan",
+          "relation": "Akraba"
+        },
+        {
+          "targetId": "P17",
+          "targetName": "Sevda",
+          "relation": "Akraba"
+        },
+        {
+          "targetId": "P19",
+          "targetName": "Can",
+          "relation": "Akraba"
+        },
+        {
+          "targetId": "P20",
+          "targetName": "Efe",
+          "relation": "Evlat"
+        },
+        {
+          "targetId": "P17",
+          "targetName": "Sevda",
+          "relation": "Eş"
+        }
+      ]
+    },
+    {
+      "id": "P19",
+      "name": "Can",
+      "families": [
+        "C"
+      ],
+      "relationships": [
+        {
+          "targetId": "P14",
+          "targetName": "Derya",
+          "relation": "Akraba"
+        },
+        {
+          "targetId": "P15",
+          "targetName": "Deniz",
+          "relation": "Akraba"
+        },
+        {
+          "targetId": "P16",
+          "targetName": "Melis",
+          "relation": "Akraba"
+        },
+        {
+          "targetId": "P18",
+          "targetName": "Mert",
+          "relation": "Akraba"
+        },
+        {
+          "targetId": "P20",
+          "targetName": "Efe",
+          "relation": "Akraba"
+        },
+        {
+          "targetId": "P12",
+          "targetName": "Emine",
+          "relation": "Anne"
+        },
+        {
+          "targetId": "P05",
+          "targetName": "Elif",
+          "relation": "Arkadaş"
+        },
+        {
+          "targetId": "P13",
+          "targetName": "Ayhan",
+          "relation": "Kardeş"
+        },
+        {
+          "targetId": "P17",
+          "targetName": "Sevda",
+          "relation": "Kardeş"
+        }
+      ]
+    },
+    {
+      "id": "P20",
+      "name": "Efe",
+      "families": [
+        "C"
+      ],
+      "relationships": [
+        {
+          "targetId": "P12",
+          "targetName": "Emine",
+          "relation": "Akraba"
+        },
+        {
+          "targetId": "P13",
+          "targetName": "Ayhan",
+          "relation": "Akraba"
+        },
+        {
+          "targetId": "P14",
+          "targetName": "Derya",
+          "relation": "Akraba"
+        },
+        {
+          "targetId": "P15",
+          "targetName": "Deniz",
+          "relation": "Akraba"
+        },
+        {
+          "targetId": "P16",
+          "targetName": "Melis",
+          "relation": "Akraba"
+        },
+        {
+          "targetId": "P19",
+          "targetName": "Can",
+          "relation": "Akraba"
+        },
+        {
+          "targetId": "P17",
+          "targetName": "Sevda",
+          "relation": "Anne"
+        },
+        {
+          "targetId": "P18",
+          "targetName": "Mert",
+          "relation": "Baba"
+        }
+      ]
+    }
+  ]
+}
