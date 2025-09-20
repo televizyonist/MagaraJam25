@@ -148,11 +148,11 @@ public class SlotRelationshipDisplay : MonoBehaviour
         UpdateSlotGlows(highlightedSlots);
     }
 
-    private void UpdateConnection(RelationshipConnection connection)
+    private bool UpdateConnection(RelationshipConnection connection)
     {
         if (connection == null)
         {
-            return;
+            return false;
         }
 
         CharacterCardDefinition fromDefinition = GetCardDefinition(connection.FromSlot);
