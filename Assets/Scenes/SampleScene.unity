@@ -212,11 +212,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 921030583964314964, guid: f4f02261d553417897aa82cb01300cc7, type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: -10.63
+      value: -11
       objectReference: {fileID: 0}
     - target: {fileID: 921030583964314964, guid: f4f02261d553417897aa82cb01300cc7, type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: 6.2
+      value: 6
       objectReference: {fileID: 0}
     - target: {fileID: 921030583964314964, guid: f4f02261d553417897aa82cb01300cc7, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x
@@ -232,6 +232,10 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 921030583964314964, guid: f4f02261d553417897aa82cb01300cc7, type: 3}
       propertyPath: m_ConstrainProportionsScale
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5232331157142959589, guid: f4f02261d553417897aa82cb01300cc7, type: 3}
+      propertyPath: m_PresetInfoIsWorld
       value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
@@ -364,12 +368,24 @@ PrefabInstance:
       value: 70
       objectReference: {fileID: 0}
     - target: {fileID: 9223372036854775807, guid: a40dac4228624a7db956ad525dc56202, type: 3}
+      propertyPath: previewScale
+      value: 0.02
+      objectReference: {fileID: 0}
+    - target: {fileID: 9223372036854775807, guid: a40dac4228624a7db956ad525dc56202, type: 3}
       propertyPath: defaultSpacing
       value: 10
       objectReference: {fileID: 0}
     - target: {fileID: 9223372036854775807, guid: a40dac4228624a7db956ad525dc56202, type: 3}
       propertyPath: expandedSpacing
       value: 100
+      objectReference: {fileID: 0}
+    - target: {fileID: 9223372036854775807, guid: a40dac4228624a7db956ad525dc56202, type: 3}
+      propertyPath: previewOffset.x
+      value: -11
+      objectReference: {fileID: 0}
+    - target: {fileID: 9223372036854775807, guid: a40dac4228624a7db956ad525dc56202, type: 3}
+      propertyPath: previewOffset.y
+      value: 6
       objectReference: {fileID: 0}
     - target: {fileID: 9223372036854775807, guid: a40dac4228624a7db956ad525dc56202, type: 3}
       propertyPath: positionSmoothTime
