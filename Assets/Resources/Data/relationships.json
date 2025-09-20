@@ -216,6 +216,11 @@
           "relation": "Akraba"
         },
         {
+          "targetId": "P10",
+          "targetName": "Zeynep",
+          "relation": "Akraba"
+        },
+        {
           "targetId": "P11",
           "targetName": "Çınar",
           "relation": "Akraba"
@@ -403,6 +408,11 @@
           "relation": "Akraba"
         },
         {
+          "targetId": "P10",
+          "targetName": "Zeynep",
+          "relation": "Akraba"
+        },
+        {
           "targetId": "P04",
           "targetName": "Cemre",
           "relation": "Evlat"
@@ -449,6 +459,11 @@
         {
           "targetId": "P06",
           "targetName": "Murat",
+          "relation": "Akraba"
+        },
+        {
+          "targetId": "P10",
+          "targetName": "Zeynep",
           "relation": "Akraba"
         },
         {
@@ -555,6 +570,11 @@
           "relation": "Akraba"
         },
         {
+          "targetId": "P04",
+          "targetName": "Cemre",
+          "relation": "Akraba"
+        },
+        {
           "targetId": "P05",
           "targetName": "Elif",
           "relation": "Akraba"
@@ -562,6 +582,16 @@
         {
           "targetId": "P06",
           "targetName": "Murat",
+          "relation": "Akraba"
+        },
+        {
+          "targetId": "P07",
+          "targetName": "Mustafa",
+          "relation": "Akraba"
+        },
+        {
+          "targetId": "P08",
+          "targetName": "Fatma",
           "relation": "Akraba"
         },
         {
@@ -763,6 +793,11 @@
         {
           "targetId": "P17",
           "targetName": "Sevda",
+          "relation": "Akraba"
+        },
+        {
+          "targetId": "P18",
+          "targetName": "Mert",
           "relation": "Akraba"
         },
         {
@@ -977,6 +1012,11 @@
           "relation": "Akraba"
         },
         {
+          "targetId": "P14",
+          "targetName": "Derya",
+          "relation": "Akraba"
+        },
+        {
           "targetId": "P17",
           "targetName": "Sevda",
           "relation": "Akraba"
@@ -1101,5 +1141,30 @@
         }
       ]
     }
-  ]
+  ],
+  "stats": {
+    "relations_count": 192,
+    "new_links_added": [
+      [
+        "Spouses-of-siblings",
+        "P14",
+        "P18"
+      ],
+      [
+        "Parent-with-child-spouse",
+        "P08",
+        "P10"
+      ],
+      [
+        "Parent-with-child-spouse",
+        "P07",
+        "P10"
+      ],
+      [
+        "Sibling-with-sibling-spouse",
+        "P04",
+        "P10"
+      ]
+    ]
+  }
 }
