@@ -14,6 +14,11 @@ public class CardSlot : MonoBehaviour
 
     private Transform CardParent => cardParent != null ? cardParent : transform;
 
+    public Transform GetCardParent()
+    {
+        return CardParent;
+    }
+
     public bool TryAccept(CardDragHandler card)
     {
         if (card == null)
@@ -21,16 +26,17 @@ public class CardSlot : MonoBehaviour
             return false;
         }
 
-        if (!allowMultipleCards && HasAnotherCard(card))
+        CardDragHandler existingCard = allowMultipleCards ? null : FindExistingCard(card);
+        if (!allowMultipleCards && existingCard != null)
         {
-            return false;
+            HandleOccupiedSlot(card, existingCard);
         }
 
         card.CompleteSlotDrop(this, CardParent, dropOffset);
         return true;
     }
 
-    private bool HasAnotherCard(CardDragHandler ignoredCard)
+    private CardDragHandler FindExistingCard(CardDragHandler ignoredCard)
     {
         foreach (Transform child in CardParent)
         {
@@ -39,12 +45,39 @@ public class CardSlot : MonoBehaviour
                 continue;
             }
 
-            if (child.GetComponent<CardDragHandler>() != null)
+            CardDragHandler handler = child.GetComponent<CardDragHandler>();
+            if (handler != null)
             {
-                return true;
+                return handler;
             }
         }
 
-        return false;
+        return null;
+    }
+
+    private void HandleOccupiedSlot(CardDragHandler incomingCard, CardDragHandler existingCard)
+    {
+        if (incomingCard == null || existingCard == null)
+        {
+            return;
+        }
+
+        CardSlot originSlot = incomingCard.OriginalSlot;
+        Transform originParent = incomingCard.OriginalParent;
+        Vector2 originAnchoredPosition = incomingCard.OriginalAnchoredPosition;
+        int originSiblingIndex = incomingCard.OriginalSiblingIndex;
+
+        if (originSlot != null && originSlot != this)
+        {
+            existingCard.CompleteSlotDrop(originSlot, originSlot.GetCardParent(), originSlot.dropOffset);
+        }
+        else if (originParent != null)
+        {
+            existingCard.CompleteNonSlotDrop(originParent, originAnchoredPosition, originSiblingIndex);
+        }
+        else
+        {
+            existingCard.RestoreOriginalPlacement();
+        }
     }
 }
