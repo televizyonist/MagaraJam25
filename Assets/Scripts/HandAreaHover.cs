@@ -24,16 +24,20 @@ public class HandAreaHover : MonoBehaviour, IPointerEnterHandler, IPointerExitHa
     private int _activeCardIndex = -1;
     private float _nextHoverCheck;
     private Camera _runtimeCamera;
+    private Transform _cachedParent;
 
     public void Awake()
     {
         _rectTransform = GetComponent<RectTransform>();
+        _cachedParent = _rectTransform.parent;
         CacheCards();
+        EnsureTopmost();
     }
 
     public void OnEnable()
     {
         CacheCards();
+        EnsureTopmost();
     }
 
     private void OnTransformChildrenChanged()
@@ -78,6 +82,11 @@ public class HandAreaHover : MonoBehaviour, IPointerEnterHandler, IPointerExitHa
         }
 
         UpdateCardPositions();
+    }
+
+    private void LateUpdate()
+    {
+        EnsureTopmost();
     }
 
     private void CacheCards()
@@ -227,5 +236,29 @@ public class HandAreaHover : MonoBehaviour, IPointerEnterHandler, IPointerExitHa
         }
 
         return null;
+    }
+
+    private void EnsureTopmost()
+    {
+        if (_rectTransform == null)
+        {
+            return;
+        }
+
+        if (_cachedParent != _rectTransform.parent)
+        {
+            _cachedParent = _rectTransform.parent;
+        }
+
+        if (_cachedParent == null)
+        {
+            return;
+        }
+
+        int lastIndex = _cachedParent.childCount - 1;
+        if (_rectTransform.GetSiblingIndex() != lastIndex)
+        {
+            _rectTransform.SetSiblingIndex(lastIndex);
+        }
     }
 }
