@@ -48,10 +48,7 @@ public class CardDragHandler : MonoBehaviour, IBeginDragHandler, IDragHandler, I
     public void OnBeginDrag(PointerEventData eventData)
     {
         _isDragging = true;
-        if (_currentSlot != null)
-        {
-            PointerExited?.Invoke(this);
-        }
+        PointerExited?.Invoke(this);
         _originalParent = _rectTransform.parent;
         _originalSiblingIndex = _rectTransform.GetSiblingIndex();
         _originalAnchoredPosition = _rectTransform.anchoredPosition;
@@ -155,7 +152,7 @@ public class CardDragHandler : MonoBehaviour, IBeginDragHandler, IDragHandler, I
 
     public void OnPointerEnter(PointerEventData eventData)
     {
-        if (_isDragging || _currentSlot == null)
+        if (_isDragging)
         {
             return;
         }
@@ -165,7 +162,7 @@ public class CardDragHandler : MonoBehaviour, IBeginDragHandler, IDragHandler, I
 
     public void OnPointerExit(PointerEventData eventData)
     {
-        if (_isDragging || _currentSlot == null)
+        if (_isDragging)
         {
             return;
         }
