@@ -46,7 +46,8 @@ public class CardDragHandler : MonoBehaviour, IBeginDragHandler, IDragHandler, I
         _originalAnchoredPosition = _rectTransform.anchoredPosition;
         _originalSlot = _currentSlot;
 
-        _dragOffset = _rectTransform.position - (Vector3)eventData.position;
+        Vector3 pointerPosition = new Vector3(eventData.position.x, eventData.position.y, _rectTransform.position.z);
+        _dragOffset = _rectTransform.position - pointerPosition;
 
         _canvasGroup.blocksRaycasts = false;
 
@@ -59,7 +60,8 @@ public class CardDragHandler : MonoBehaviour, IBeginDragHandler, IDragHandler, I
 
     public void OnDrag(PointerEventData eventData)
     {
-        _rectTransform.position = eventData.position + _dragOffset;
+        Vector3 pointerPosition = new Vector3(eventData.position.x, eventData.position.y, _rectTransform.position.z);
+        _rectTransform.position = pointerPosition + _dragOffset;
     }
 
     public void OnEndDrag(PointerEventData eventData)
