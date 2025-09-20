@@ -7,7 +7,11 @@ using UnityEngine;
 public class SlotRelationshipDisplay : MonoBehaviour
 {
     private readonly Dictionary<int, CardSlot> _slotsByIndex = new Dictionary<int, CardSlot>();
+    private readonly List<CardSlot> _allSlots = new List<CardSlot>();
     private readonly List<RelationshipConnection> _connections = new List<RelationshipConnection>();
+
+    private CardDragHandler _hoveredCard;
+    private CardSlot _hoveredSlot;
 
     private void Awake()
     {
@@ -17,7 +21,20 @@ public class SlotRelationshipDisplay : MonoBehaviour
 
     private void OnEnable()
     {
+        CardDragHandler.PointerEntered += HandleCardPointerEnter;
+        CardDragHandler.PointerExited += HandleCardPointerExit;
+
         Initialize();
+        UpdateConnections();
+    }
+
+    private void OnDisable()
+    {
+        CardDragHandler.PointerEntered -= HandleCardPointerEnter;
+        CardDragHandler.PointerExited -= HandleCardPointerExit;
+
+        _hoveredCard = null;
+        _hoveredSlot = null;
         UpdateConnections();
     }
 
@@ -29,10 +46,18 @@ public class SlotRelationshipDisplay : MonoBehaviour
     private void Initialize()
     {
         _slotsByIndex.Clear();
+        _allSlots.Clear();
         CacheSlots();
 
         _connections.Clear();
         CacheConnections();
+
+        foreach (RelationshipConnection connection in _connections)
+        {
+            SetConnectionActive(connection, false);
+        }
+
+        UpdateSlotGlows(null);
     }
 
     private void CacheSlots()
@@ -48,6 +73,11 @@ public class SlotRelationshipDisplay : MonoBehaviour
             if (TryParseSlotIndex(slot.gameObject.name, out int index) && !_slotsByIndex.ContainsKey(index))
             {
                 _slotsByIndex.Add(index, slot);
+            }
+
+            if (!_allSlots.Contains(slot))
+            {
+                _allSlots.Add(slot);
             }
         }
     }
@@ -85,37 +115,121 @@ public class SlotRelationshipDisplay : MonoBehaviour
     {
         if (_connections.Count == 0)
         {
+            UpdateSlotGlows(null);
             return;
         }
 
+        HashSet<CardSlot> highlightedSlots = new HashSet<CardSlot>();
         foreach (RelationshipConnection connection in _connections)
         {
-            UpdateConnection(connection);
+            bool isDisplayed = UpdateConnection(connection);
+            if (!isDisplayed)
+            {
+                continue;
+            }
+
+            if (connection.FromSlot != null)
+            {
+                highlightedSlots.Add(connection.FromSlot);
+            }
+
+            if (connection.ToSlot != null)
+            {
+                highlightedSlots.Add(connection.ToSlot);
+            }
         }
+
+        UpdateSlotGlows(highlightedSlots);
     }
 
-    private void UpdateConnection(RelationshipConnection connection)
+    private bool UpdateConnection(RelationshipConnection connection)
     {
         if (connection == null)
         {
-            return;
+            return false;
         }
 
         CharacterCardDefinition fromDefinition = GetCardDefinition(connection.FromSlot);
         CharacterCardDefinition toDefinition = GetCardDefinition(connection.ToSlot);
 
+        string relation = string.Empty;
         if (fromDefinition != null && toDefinition != null)
         {
-            string relation = ResolveRelationship(fromDefinition, toDefinition);
-            if (!string.IsNullOrWhiteSpace(relation))
-            {
-                SetConnectionActive(connection, true);
-                SetConnectionText(connection, relation);
-                return;
-            }
+            relation = ResolveRelationship(fromDefinition, toDefinition);
         }
 
-        SetConnectionActive(connection, false);
+        bool hasRelationship = !string.IsNullOrWhiteSpace(relation);
+        connection.HasRelationship = hasRelationship;
+        connection.RelationshipText = relation;
+
+        bool shouldDisplay = hasRelationship && ShouldDisplayConnection(connection);
+        SetConnectionActive(connection, shouldDisplay);
+
+        if (shouldDisplay)
+        {
+            SetConnectionText(connection, relation);
+        }
+
+        return shouldDisplay;
+    }
+
+    private bool ShouldDisplayConnection(RelationshipConnection connection)
+    {
+        if (!connection.HasRelationship)
+        {
+            return false;
+        }
+
+        if (_hoveredSlot == null)
+        {
+            return false;
+        }
+
+        return connection.FromSlot == _hoveredSlot || connection.ToSlot == _hoveredSlot;
+    }
+
+    private void UpdateSlotGlows(ISet<CardSlot> highlightedSlots)
+    {
+        foreach (CardSlot slot in _allSlots)
+        {
+            if (slot == null)
+            {
+                continue;
+            }
+
+            bool shouldGlow = highlightedSlots != null && highlightedSlots.Contains(slot);
+            slot.SetGlowActive(shouldGlow);
+        }
+    }
+
+    private void HandleCardPointerEnter(CardDragHandler handler)
+    {
+        if (handler == null)
+        {
+            return;
+        }
+
+        CardSlot slot = handler.CurrentSlot;
+        if (slot == null)
+        {
+            return;
+        }
+
+        _hoveredCard = handler;
+        _hoveredSlot = slot;
+        UpdateConnections();
+    }
+
+    private void HandleCardPointerExit(CardDragHandler handler)
+    {
+        if (handler == null || handler != _hoveredCard)
+        {
+            return;
+        }
+
+        _hoveredCard = null;
+        _hoveredSlot = null;
+        UpdateConnections();
     }
 
     private CharacterCardDefinition GetCardDefinition(CardSlot slot)
@@ -280,5 +394,7 @@ public class SlotRelationshipDisplay : MonoBehaviour
         public TMP_Text Label { get; }
         public bool LastActive { get; set; }
         public string LastText { get; set; }
+        public bool HasRelationship { get; set; }
+        public string RelationshipText { get; set; }
     }
 }
