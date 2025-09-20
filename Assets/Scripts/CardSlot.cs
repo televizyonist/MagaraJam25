@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 
 public class CardSlot : MonoBehaviour
@@ -12,11 +13,80 @@ public class CardSlot : MonoBehaviour
     [Tooltip("Anchored position applied to the card when it is dropped on this slot.")]
     public Vector2 dropOffset = Vector2.zero;
 
+    [Header("Visuals")]
+    [Tooltip("Optional object that is activated to highlight this slot. Defaults to a child named 'Glow'.")]
+    [SerializeField]
+    private GameObject glowRoot;
+
     private Transform CardParent => cardParent != null ? cardParent : transform;
 
     public Transform GetCardParent()
     {
         return CardParent;
+    }
+
+    private void Awake()
+    {
+        EnsureGlowReference();
+        SetGlowActive(false);
+    }
+
+    private void Reset()
+    {
+        EnsureGlowReference();
+        SetGlowActive(false);
+    }
+
+    private void OnEnable()
+    {
+        EnsureGlowReference();
+        SetGlowActive(false);
+    }
+
+    private void EnsureGlowReference()
+    {
+        if (glowRoot != null)
+        {
+            return;
+        }
+
+        Transform found = transform.Find("Glow");
+        if (found == null)
+        {
+            for (int i = 0; i < transform.childCount; i++)
+            {
+                Transform child = transform.GetChild(i);
+                if (child == null)
+                {
+                    continue;
+                }
+
+                if (string.Equals(child.name, "Glow", StringComparison.OrdinalIgnoreCase))
+                {
+                    found = child;
+                    break;
+                }
+            }
+        }
+
+        if (found != null)
+        {
+            glowRoot = found.gameObject;
+        }
+    }
+
+    public void SetGlowActive(bool isActive)
+    {
+        EnsureGlowReference();
+        if (glowRoot == null)
+        {
+            return;
+        }
+
+        if (glowRoot.activeSelf != isActive)
+        {
+            glowRoot.SetActive(isActive);
+        }
     }
 
     public bool TryAccept(CardDragHandler card)
