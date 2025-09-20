@@ -161,11 +161,22 @@ public class HandAreaHover : MonoBehaviour, IPointerEnterHandler, IPointerExitHa
         {
             _hoveredIndex = -1;
             _activeCardIndex = -1;
+            HidePreview();
+            return;
         }
-        else
+
+        _hoveredIndex = Mathf.Clamp(_hoveredIndex, -1, _cardRects.Count - 1);
+        _activeCardIndex = Mathf.Clamp(_activeCardIndex, -1, _cardRects.Count - 1);
+
+        if (_hoveredIndex >= 0)
         {
-            _hoveredIndex = Mathf.Clamp(_hoveredIndex, -1, _cardRects.Count - 1);
-            _activeCardIndex = Mathf.Clamp(_activeCardIndex, -1, _cardRects.Count - 1);
+            RectTransform hoveredRect = _cardRects[_hoveredIndex];
+            if (hoveredRect == null || !hoveredRect.gameObject.activeInHierarchy)
+            {
+                _hoveredIndex = -1;
+                _activeCardIndex = -1;
+                HidePreview();
+            }
         }
     }
 
@@ -588,13 +599,24 @@ public class HandAreaHover : MonoBehaviour, IPointerEnterHandler, IPointerExitHa
 
     private void ShowPreviewForHoveredCard()
     {
-        if (_hoveredIndex < 0 || _hoveredIndex >= _handCards.Count)
+        if (_hoveredIndex < 0 || _hoveredIndex >= _cardRects.Count)
         {
             HidePreview();
             return;
         }
 
-        CardView sourceView = _handCards[_hoveredIndex];
+        RectTransform hoveredRect = _cardRects[_hoveredIndex];
+        if (hoveredRect == null)
+        {
+            HidePreview();
+            return;
+        }
+
+        CardView sourceView = hoveredRect.GetComponent<CardView>();
+        if (sourceView == null)
+        {
+            sourceView = hoveredRect.GetComponentInChildren<CardView>();
+        }
         if (sourceView == null || sourceView.Definition == null)
         {
             HidePreview();
@@ -762,38 +784,29 @@ public class HandAreaHover : MonoBehaviour, IPointerEnterHandler, IPointerExitHa
         }
 
         Camera camera = uiCamera != null ? uiCamera : _runtimeCamera;
-        if (!RectTransformUtility.ScreenPointToLocalPointInRectangle(_rectTransform, pointerPosition, camera, out Vector2 localPoint))
-        {
-            return -1;
-        }
-
-        int closestIndex = -1;
-        float closestDistance = float.MaxValue;
 
         for (int i = 0; i < _cardRects.Count; i++)
         {
             RectTransform card = _cardRects[i];
-            Vector2 cardPos = card.anchoredPosition;
-            Vector2 halfSize = card.rect.size * 0.5f;
-
-            float horizontalDelta = Mathf.Abs(localPoint.x - cardPos.x);
-            float verticalDelta = Mathf.Abs(localPoint.y - cardPos.y);
-
-            float verticalLimit = halfSize.y + hoverYOffset;
-
-            if (horizontalDelta <= halfSize.x && verticalDelta <= verticalLimit)
+            if (card == null || !card.gameObject.activeInHierarchy)
             {
-                return i;
+                continue;
             }
 
-            if (horizontalDelta < closestDistance)
+            if (RectTransformUtility.ScreenPointToLocalPointInRectangle(card, pointerPosition, camera, out Vector2 cardLocalPoint))
             {
-                closestDistance = horizontalDelta;
-                closestIndex = i;
+                Rect expandedRect = card.rect;
+                expandedRect.yMin -= hoverYOffset;
+                expandedRect.yMax += hoverYOffset;
+
+                if (expandedRect.Contains(cardLocalPoint))
+                {
+                    return i;
+                }
             }
         }
 
-        return closestIndex;
+        return -1;
     }
 
     private Camera ResolveCamera(PointerEventData eventData)
