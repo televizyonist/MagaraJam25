@@ -110,7 +110,35 @@ public class CardDragHandler : MonoBehaviour, IBeginDragHandler, IDragHandler, I
         _rectTransform.anchoredPosition = anchoredPosition;
     }
 
+    public void CompleteNonSlotDrop(Transform parent, Vector2 anchoredPosition, int siblingIndex)
+    {
+        _currentSlot = null;
+
+        if (parent == null)
+        {
+            return;
+        }
+
+        _rectTransform.SetParent(parent, false);
+
+        if (siblingIndex >= 0 && siblingIndex < parent.childCount)
+        {
+            _rectTransform.SetSiblingIndex(siblingIndex);
+        }
+        else
+        {
+            _rectTransform.SetAsLastSibling();
+        }
+
+        _rectTransform.anchoredPosition = anchoredPosition;
+    }
+
     public RectTransform RectTransform => _rectTransform;
+    public CardSlot CurrentSlot => _currentSlot;
+    public CardSlot OriginalSlot => _originalSlot;
+    public Transform OriginalParent => _originalParent;
+    public int OriginalSiblingIndex => _originalSiblingIndex;
+    public Vector2 OriginalAnchoredPosition => _originalAnchoredPosition;
 
     private Vector3 GetPointerWorldPosition(PointerEventData eventData)
     {
