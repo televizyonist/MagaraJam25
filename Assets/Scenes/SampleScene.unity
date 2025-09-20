@@ -212,11 +212,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5960789342781726645, guid: a40dac4228624a7db956ad525dc56202, type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: 0
+      value: -9
       objectReference: {fileID: 0}
     - target: {fileID: 5960789342781726645, guid: a40dac4228624a7db956ad525dc56202, type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: -4.91
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 5960789342781726645, guid: a40dac4228624a7db956ad525dc56202, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x
@@ -333,7 +333,7 @@ Camera:
   near clip plane: 0.3
   far clip plane: 1000
   field of view: 60
-  orthographic: 1
+  orthographic: 0
   orthographic size: 5
   m_Depth: -1
   m_CullingMask:
@@ -359,7 +359,7 @@ Transform:
   m_GameObject: {fileID: 519420028}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: -10}
+  m_LocalPosition: {x: -4, y: 4, z: -11}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -443,15 +443,15 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 516841826603092045, guid: eae1bcacdd5af9f4f9b0c2e31f4c79bb, type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 1199367489912289611, guid: eae1bcacdd5af9f4f9b0c2e31f4c79bb, type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 1915219796128456626, guid: eae1bcacdd5af9f4f9b0c2e31f4c79bb, type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 2647141232727049431, guid: eae1bcacdd5af9f4f9b0c2e31f4c79bb, type: 3}
       propertyPath: m_LocalPosition.x
@@ -495,15 +495,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7362291126382426435, guid: eae1bcacdd5af9f4f9b0c2e31f4c79bb, type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 7635893797080807589, guid: eae1bcacdd5af9f4f9b0c2e31f4c79bb, type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 7970876785524350891, guid: eae1bcacdd5af9f4f9b0c2e31f4c79bb, type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 8187553421447118944, guid: eae1bcacdd5af9f4f9b0c2e31f4c79bb, type: 3}
       propertyPath: m_Name
