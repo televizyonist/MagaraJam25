@@ -315,6 +315,14 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 1175017401724976934, guid: a40dac4228624a7db956ad525dc56202, type: 3}
+      propertyPath: m_IsTrigger
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5232331157142959599, guid: a40dac4228624a7db956ad525dc56202, type: 3}
+      propertyPath: m_PresetInfoIsWorld
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 5960789342781726645, guid: a40dac4228624a7db956ad525dc56202, type: 3}
       propertyPath: m_Pivot.x
       value: 0.5
@@ -430,6 +438,10 @@ PrefabInstance:
     - target: {fileID: 9223372036854775807, guid: a40dac4228624a7db956ad525dc56202, type: 3}
       propertyPath: expandedSpacing
       value: 100
+      objectReference: {fileID: 0}
+    - target: {fileID: 9223372036854775807, guid: a40dac4228624a7db956ad525dc56202, type: 3}
+      propertyPath: positionSmoothTime
+      value: 0.1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
