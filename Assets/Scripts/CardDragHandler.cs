@@ -1,8 +1,9 @@
+using System;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
 [RequireComponent(typeof(RectTransform))]
-public class CardDragHandler : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHandler
+public class CardDragHandler : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHandler, IPointerEnterHandler, IPointerExitHandler
 {
     [Header("Dependencies")]
     [Tooltip("Canvas used to position the card while it is being dragged. Defaults to the first parent canvas if not assigned.")]
@@ -24,6 +25,9 @@ public class CardDragHandler : MonoBehaviour, IBeginDragHandler, IDragHandler, I
 
     private bool _isDragging;
 
+    public static event Action<CardDragHandler> PointerEntered;
+    public static event Action<CardDragHandler> PointerExited;
+
     private void Awake()
     {
         _rectTransform = GetComponent<RectTransform>();
@@ -44,6 +48,10 @@ public class CardDragHandler : MonoBehaviour, IBeginDragHandler, IDragHandler, I
     public void OnBeginDrag(PointerEventData eventData)
     {
         _isDragging = true;
+        if (_currentSlot != null)
+        {
+            PointerExited?.Invoke(this);
+        }
         _originalParent = _rectTransform.parent;
         _originalSiblingIndex = _rectTransform.GetSiblingIndex();
         _originalAnchoredPosition = _rectTransform.anchoredPosition;
@@ -144,6 +152,26 @@ public class CardDragHandler : MonoBehaviour, IBeginDragHandler, IDragHandler, I
     public int OriginalSiblingIndex => _originalSiblingIndex;
     public Vector2 OriginalAnchoredPosition => _originalAnchoredPosition;
     public bool IsDragging => _isDragging;
+
+    public void OnPointerEnter(PointerEventData eventData)
+    {
+        if (_isDragging || _currentSlot == null)
+        {
+            return;
+        }
+
+        PointerEntered?.Invoke(this);
+    }
+
+    public void OnPointerExit(PointerEventData eventData)
+    {
+        if (_isDragging || _currentSlot == null)
+        {
+            return;
+        }
+
+        PointerExited?.Invoke(this);
+    }
 
     private Vector3 GetPointerWorldPosition(PointerEventData eventData)
     {
