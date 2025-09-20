@@ -27,6 +27,8 @@ public class CardDragHandler : MonoBehaviour, IBeginDragHandler, IDragHandler, I
 
     public static event Action<CardDragHandler> PointerEntered;
     public static event Action<CardDragHandler> PointerExited;
+    public static event Action<CardDragHandler> DragStarted;
+    public static event Action<CardDragHandler> DragEnded;
 
     private void Awake()
     {
@@ -49,6 +51,7 @@ public class CardDragHandler : MonoBehaviour, IBeginDragHandler, IDragHandler, I
     {
         _isDragging = true;
         PointerExited?.Invoke(this);
+        DragStarted?.Invoke(this);
         _originalParent = _rectTransform.parent;
         _originalSiblingIndex = _rectTransform.GetSiblingIndex();
         _originalAnchoredPosition = _rectTransform.anchoredPosition;
@@ -76,6 +79,7 @@ public class CardDragHandler : MonoBehaviour, IBeginDragHandler, IDragHandler, I
     {
         _isDragging = false;
         _canvasGroup.blocksRaycasts = true;
+        DragEnded?.Invoke(this);
 
         CardSlot targetSlot = null;
         if (eventData.pointerEnter != null)

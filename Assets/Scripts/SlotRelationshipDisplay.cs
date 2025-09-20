@@ -12,6 +12,11 @@ public class SlotRelationshipDisplay : MonoBehaviour
 
     private CardDragHandler _hoveredCard;
     private CharacterCardDefinition _hoveredCardDefinition;
+    private CardDragHandler _hoveredBoardCard;
+    private CharacterCardDefinition _hoveredBoardDefinition;
+    private CardSlot _hoveredBoardSlot;
+    private CardDragHandler _draggedCard;
+    private CharacterCardDefinition _draggedCardDefinition;
 
     private void Awake()
     {
@@ -23,6 +28,8 @@ public class SlotRelationshipDisplay : MonoBehaviour
     {
         CardDragHandler.PointerEntered += HandleCardPointerEnter;
         CardDragHandler.PointerExited += HandleCardPointerExit;
+        CardDragHandler.DragStarted += HandleCardDragStarted;
+        CardDragHandler.DragEnded += HandleCardDragEnded;
 
         Initialize();
         UpdateConnections();
@@ -32,9 +39,10 @@ public class SlotRelationshipDisplay : MonoBehaviour
     {
         CardDragHandler.PointerEntered -= HandleCardPointerEnter;
         CardDragHandler.PointerExited -= HandleCardPointerExit;
+        CardDragHandler.DragStarted -= HandleCardDragStarted;
+        CardDragHandler.DragEnded -= HandleCardDragEnded;
 
-        _hoveredCard = null;
-        _hoveredCardDefinition = null;
+        ClearHoverStates();
         UpdateConnections();
     }
 
@@ -45,6 +53,7 @@ public class SlotRelationshipDisplay : MonoBehaviour
 
     private void Initialize()
     {
+        ClearHoverStates();
         _slotsByIndex.Clear();
         _allSlots.Clear();
         CacheSlots();
@@ -157,55 +166,98 @@ public class SlotRelationshipDisplay : MonoBehaviour
 
         CharacterCardDefinition fromDefinition = GetCardDefinition(connection.FromSlot);
         CharacterCardDefinition toDefinition = GetCardDefinition(connection.ToSlot);
-        CharacterCardDefinition hoveredDefinition = _hoveredCardDefinition;
-
         string slotRelation = string.Empty;
         if (fromDefinition != null && toDefinition != null)
         {
             slotRelation = ResolveRelationship(fromDefinition, toDefinition);
         }
 
-        string hoverRelation = string.Empty;
-        bool hoverMatchesEitherSlot = false;
-        if (hoveredDefinition != null)
+        CharacterCardDefinition activeDefinition = _hoveredCardDefinition ?? _draggedCardDefinition;
+        CardSlot focusedSlot = _hoveredBoardSlot;
+
+        string relationWithFrom = string.Empty;
+        string relationWithTo = string.Empty;
+        bool activeMatchesFrom = false;
+        bool activeMatchesTo = false;
+
+        if (activeDefinition != null)
         {
             if (fromDefinition != null)
             {
-                string relationWithFrom = ResolveRelationship(hoveredDefinition, fromDefinition);
-                if (!string.IsNullOrWhiteSpace(relationWithFrom))
-                {
-                    hoverMatchesEitherSlot = true;
-                    hoverRelation = relationWithFrom;
-                }
+                relationWithFrom = ResolveRelationship(activeDefinition, fromDefinition);
+                activeMatchesFrom = !string.IsNullOrWhiteSpace(relationWithFrom);
             }
 
             if (toDefinition != null)
             {
-                string relationWithTo = ResolveRelationship(hoveredDefinition, toDefinition);
-                if (!string.IsNullOrWhiteSpace(relationWithTo))
-                {
-                    hoverMatchesEitherSlot = true;
-                    if (string.IsNullOrEmpty(hoverRelation))
-                    {
-                        hoverRelation = relationWithTo;
-                    }
-                }
+                relationWithTo = ResolveRelationship(activeDefinition, toDefinition);
+                activeMatchesTo = !string.IsNullOrWhiteSpace(relationWithTo);
             }
 
-            bool shouldGlow = highlightedSlots != null && highlightedSlots.Contains(slot);
-            slot.SetGlowActive(shouldGlow);
+            if (focusedSlot != null)
+            {
+                if (connection.FromSlot != focusedSlot)
+                {
+                    activeMatchesFrom = false;
+                }
+
+                if (connection.ToSlot != focusedSlot)
+                {
+                    activeMatchesTo = false;
+                }
+            }
         }
-    }
 
         bool slotsHaveRelationship = !string.IsNullOrWhiteSpace(slotRelation);
-        bool hoverProvidesRelationship = !string.IsNullOrWhiteSpace(hoverRelation);
+        bool hoverProvidesRelationship = activeMatchesFrom || activeMatchesTo;
 
-        string relationToDisplay = slotsHaveRelationship ? slotRelation : hoverRelation;
+        string relationToDisplay = slotRelation;
+        if (string.IsNullOrWhiteSpace(relationToDisplay))
+        {
+            if (activeMatchesFrom)
+            {
+                relationToDisplay = relationWithFrom;
+            }
+            else if (activeMatchesTo)
+            {
+                relationToDisplay = relationWithTo;
+            }
+        }
+
+        bool highlightFrom = false;
+        bool highlightTo = false;
+
+        if (activeMatchesFrom)
+        {
+            if (connection.FromSlot != null)
+            {
+                highlightFrom = true;
+            }
+
+            if (connection.ToSlot != null)
+            {
+                highlightTo = true;
+            }
+        }
+
+        if (activeMatchesTo)
+        {
+            if (connection.ToSlot != null)
+            {
+                highlightTo = true;
+            }
+
+            if (connection.FromSlot != null)
+            {
+                highlightFrom = true;
+            }
+        }
+
         bool shouldDisplayLabel = slotsHaveRelationship || hoverProvidesRelationship;
 
         connection.RelationshipText = relationToDisplay;
-        connection.HighlightFrom = hoverMatchesEitherSlot && connection.FromSlot != null;
-        connection.HighlightTo = hoverMatchesEitherSlot && connection.ToSlot != null;
+        connection.HighlightFrom = highlightFrom;
+        connection.HighlightTo = highlightTo;
 
         SetConnectionActive(connection, shouldDisplayLabel);
 
@@ -238,31 +290,120 @@ public class SlotRelationshipDisplay : MonoBehaviour
             return;
         }
 
-        if (!IsHandCard(handler))
+        if (handler == _draggedCard)
         {
             return;
         }
 
-        CharacterCardDefinition definition = GetCardDefinition(handler);
-        if (definition == null)
+        if (IsHandCard(handler))
+        {
+            CharacterCardDefinition definition = GetCardDefinition(handler);
+            if (definition == null)
+            {
+                return;
+            }
+
+            _hoveredCard = handler;
+            _hoveredCardDefinition = definition;
+            _hoveredBoardCard = null;
+            _hoveredBoardDefinition = null;
+            _hoveredBoardSlot = null;
+            UpdateConnections();
+            return;
+        }
+    }
+
+        if (_draggedCardDefinition == null)
         {
             return;
         }
 
-        _hoveredCard = handler;
-        _hoveredCardDefinition = definition;
+        CardSlot slot = handler.CurrentSlot;
+        if (slot == null)
+        {
+            return;
+        }
+
+        CharacterCardDefinition boardDefinition = GetCardDefinition(handler);
+        if (boardDefinition == null)
+        {
+            return;
+        }
+
+        _hoveredBoardCard = handler;
+        _hoveredBoardDefinition = boardDefinition;
+        _hoveredBoardSlot = slot;
         UpdateConnections();
     }
 
     private void HandleCardPointerExit(CardDragHandler handler)
     {
-        if (handler == null || handler != _hoveredCard)
+        if (handler == null)
         {
             return;
         }
 
-        _hoveredCard = null;
-        _hoveredCardDefinition = null;
+        bool stateChanged = false;
+
+        if (handler == _hoveredCard)
+        {
+            _hoveredCard = null;
+            _hoveredCardDefinition = null;
+            stateChanged = true;
+        }
+
+        if (handler == _hoveredBoardCard)
+        {
+            _hoveredBoardCard = null;
+            _hoveredBoardDefinition = null;
+            _hoveredBoardSlot = null;
+            stateChanged = true;
+        }
+
+        if (stateChanged)
+        {
+            UpdateConnections();
+        }
+    }
+
+    private void HandleCardDragStarted(CardDragHandler handler)
+    {
+        if (handler == null)
+        {
+            return;
+        }
+
+        _draggedCard = handler;
+        _draggedCardDefinition = GetCardDefinition(handler);
+
+        if (_hoveredCard == handler)
+        {
+            _hoveredCard = null;
+            _hoveredCardDefinition = null;
+        }
+
+        if (_hoveredBoardCard == handler)
+        {
+            _hoveredBoardCard = null;
+            _hoveredBoardDefinition = null;
+            _hoveredBoardSlot = null;
+        }
+
+        UpdateConnections();
+    }
+
+    private void HandleCardDragEnded(CardDragHandler handler)
+    {
+        if (handler == null || handler != _draggedCard)
+        {
+            return;
+        }
+
+        _draggedCard = null;
+        _draggedCardDefinition = null;
+        _hoveredBoardCard = null;
+        _hoveredBoardDefinition = null;
+        _hoveredBoardSlot = null;
         UpdateConnections();
     }
 
@@ -400,6 +541,17 @@ public class SlotRelationshipDisplay : MonoBehaviour
         {
             connection.Label.text = newText;
         }
+    }
+
+    private void ClearHoverStates()
+    {
+        _hoveredCard = null;
+        _hoveredCardDefinition = null;
+        _hoveredBoardCard = null;
+        _hoveredBoardDefinition = null;
+        _hoveredBoardSlot = null;
+        _draggedCard = null;
+        _draggedCardDefinition = null;
     }
 
     private bool TryParseSlotIndex(string name, out int index)
