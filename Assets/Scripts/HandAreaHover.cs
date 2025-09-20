@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
@@ -5,6 +6,19 @@ using UnityEngine.EventSystems;
 [RequireComponent(typeof(RectTransform))]
 public class HandAreaHover : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IPointerMoveHandler
 {
+    [Header("Card Generation")]
+    [Tooltip("Resource path used to load the card prefab.")]
+    public string cardPrefabResourcePath = "Prefabs/Card";
+
+    [Tooltip("Resource path used to load the relationship data json.")]
+    public string relationshipsResourcePath = "Data/relationships";
+
+    [Tooltip("Amount of cards that will be dealt to the player's hand when the game starts.")]
+    public int startingHandSize = 10;
+
+    [Tooltip("Optional container used to keep cards that are not currently in the player's hand.")]
+    public RectTransform deckContainer;
+
     [Header("Layout")]
     public float defaultSpacing = 10f;
     public float expandedSpacing = 40f;
@@ -18,6 +32,15 @@ public class HandAreaHover : MonoBehaviour, IPointerEnterHandler, IPointerExitHa
     private readonly List<RectTransform> _cardRects = new List<RectTransform>();
     private readonly List<Vector2> _velocity = new List<Vector2>();
 
+    private readonly List<CardView> _drawPile = new List<CardView>();
+    private readonly List<CardView> _handCards = new List<CardView>();
+    private readonly List<CharacterCardDefinition> _cardDefinitions = new List<CharacterCardDefinition>();
+
+    private GameObject _cardPrefab;
+    private System.Random _random;
+    private bool _cardsInitialized;
+    private bool _initializationInProgress;
+
     private RectTransform _rectTransform;
     private bool _isHovered;
     private int _hoveredIndex = -1;
@@ -30,6 +53,8 @@ public class HandAreaHover : MonoBehaviour, IPointerEnterHandler, IPointerExitHa
     {
         _rectTransform = GetComponent<RectTransform>();
         _cachedParent = _rectTransform.parent;
+        _random = new System.Random();
+        InitializeCards();
         CacheCards();
         EnsureTopmost();
     }
@@ -42,6 +67,7 @@ public class HandAreaHover : MonoBehaviour, IPointerEnterHandler, IPointerExitHa
 
     private void OnTransformChildrenChanged()
     {
+        InitializeCards();
         CacheCards();
     }
 
@@ -115,6 +141,292 @@ public class HandAreaHover : MonoBehaviour, IPointerEnterHandler, IPointerExitHa
         {
             _hoveredIndex = Mathf.Clamp(_hoveredIndex, -1, _cardRects.Count - 1);
             _activeCardIndex = Mathf.Clamp(_activeCardIndex, -1, _cardRects.Count - 1);
+        }
+    }
+
+    private void InitializeCards()
+    {
+        if (_cardsInitialized || _initializationInProgress)
+        {
+            return;
+        }
+
+        _initializationInProgress = true;
+
+        try
+        {
+            if (_random == null)
+            {
+                _random = new System.Random();
+            }
+
+            EnsureDeckContainer();
+            LoadCardPrefab();
+            LoadCardDefinitions();
+
+            if (_cardDefinitions.Count == 0)
+            {
+                _cardsInitialized = true;
+                return;
+            }
+
+            PrepareExistingHandCards();
+            PopulateDrawPile();
+            DealStartingHand();
+
+            _cardsInitialized = true;
+        }
+        finally
+        {
+            _initializationInProgress = false;
+        }
+    }
+
+    private void EnsureDeckContainer()
+    {
+        if (deckContainer != null)
+        {
+            return;
+        }
+
+        var deckObject = new GameObject("DeckContainer", typeof(RectTransform));
+        deckContainer = deckObject.GetComponent<RectTransform>();
+
+        Transform parent = _rectTransform != null && _rectTransform.parent != null
+            ? _rectTransform.parent
+            : transform.parent;
+
+        if (parent != null)
+        {
+            deckContainer.SetParent(parent, false);
+        }
+        else
+        {
+            deckContainer.SetParent(transform, false);
+        }
+
+        deckContainer.anchorMin = Vector2.zero;
+        deckContainer.anchorMax = Vector2.zero;
+        deckContainer.pivot = new Vector2(0.5f, 0.5f);
+        deckContainer.anchoredPosition = Vector2.zero;
+        deckContainer.sizeDelta = Vector2.zero;
+    }
+
+    private void LoadCardPrefab()
+    {
+        if (_cardPrefab != null)
+        {
+            return;
+        }
+
+        if (string.IsNullOrWhiteSpace(cardPrefabResourcePath))
+        {
+            Debug.LogError("Card prefab resource path is empty.");
+            return;
+        }
+
+        _cardPrefab = Resources.Load<GameObject>(cardPrefabResourcePath);
+
+        if (_cardPrefab == null)
+        {
+            Debug.LogError($"Card prefab could not be loaded from Resources/{cardPrefabResourcePath}.");
+        }
+    }
+
+    private void LoadCardDefinitions()
+    {
+        _cardDefinitions.Clear();
+
+        if (string.IsNullOrWhiteSpace(relationshipsResourcePath))
+        {
+            Debug.LogError("Relationships resource path is empty.");
+            return;
+        }
+
+        TextAsset relationshipsAsset = Resources.Load<TextAsset>(relationshipsResourcePath);
+        if (relationshipsAsset == null)
+        {
+            Debug.LogError($"Relationships data could not be loaded from Resources/{relationshipsResourcePath}.");
+            return;
+        }
+
+        try
+        {
+            var database = JsonUtility.FromJson<CharacterRelationshipDatabase>(relationshipsAsset.text);
+            if (database != null && database.characters != null)
+            {
+                _cardDefinitions.AddRange(database.characters);
+            }
+        }
+        catch (Exception ex)
+        {
+            Debug.LogError($"Failed to parse relationships data: {ex.Message}");
+        }
+
+        if (_cardDefinitions.Count > 1)
+        {
+            Shuffle(_cardDefinitions);
+        }
+    }
+
+    private void PrepareExistingHandCards()
+    {
+        _handCards.Clear();
+
+        var toDisable = new List<GameObject>();
+
+        foreach (Transform child in transform)
+        {
+            if (child == null)
+            {
+                continue;
+            }
+
+            var dragHandler = child.GetComponent<CardDragHandler>();
+            if (dragHandler == null)
+            {
+                continue;
+            }
+
+            var view = child.GetComponent<CardView>();
+            if (view == null)
+            {
+                view = child.gameObject.AddComponent<CardView>();
+            }
+
+            _handCards.Add(view);
+        }
+
+        int configuredHandSize = Mathf.Min(startingHandSize, _cardDefinitions.Count);
+
+        if (_handCards.Count > configuredHandSize)
+        {
+            for (int i = configuredHandSize; i < _handCards.Count; i++)
+            {
+                if (_handCards[i] != null)
+                {
+                    toDisable.Add(_handCards[i].gameObject);
+                }
+            }
+
+            _handCards.RemoveRange(configuredHandSize, _handCards.Count - configuredHandSize);
+        }
+
+        if (_handCards.Count < configuredHandSize && _cardPrefab != null)
+        {
+            int cardsToCreate = configuredHandSize - _handCards.Count;
+            for (int i = 0; i < cardsToCreate; i++)
+            {
+                GameObject cardObject = Instantiate(_cardPrefab, transform);
+                var view = cardObject.GetComponent<CardView>();
+                if (view == null)
+                {
+                    view = cardObject.AddComponent<CardView>();
+                }
+
+                _handCards.Add(view);
+            }
+        }
+
+        foreach (GameObject obj in toDisable)
+        {
+            if (obj != null)
+            {
+                obj.SetActive(false);
+            }
+        }
+    }
+
+    private void PopulateDrawPile()
+    {
+        _drawPile.Clear();
+
+        if (_cardPrefab == null)
+        {
+            return;
+        }
+
+        int startIndex = Mathf.Min(startingHandSize, _cardDefinitions.Count);
+
+        for (int i = startIndex; i < _cardDefinitions.Count; i++)
+        {
+            CharacterCardDefinition definition = _cardDefinitions[i];
+            GameObject cardObject = Instantiate(_cardPrefab, deckContainer);
+            cardObject.name = definition != null ? definition.id : $"Card_{i}";
+
+            var view = cardObject.GetComponent<CardView>();
+            if (view == null)
+            {
+                view = cardObject.AddComponent<CardView>();
+            }
+
+            view.SetData(definition);
+            cardObject.SetActive(false);
+            _drawPile.Add(view);
+        }
+
+        if (_drawPile.Count > 1)
+        {
+            Shuffle(_drawPile);
+        }
+    }
+
+    private void DealStartingHand()
+    {
+        if (_cardDefinitions.Count == 0 || _handCards.Count == 0)
+        {
+            return;
+        }
+
+        int cardsToDeal = Mathf.Min(startingHandSize, _cardDefinitions.Count, _handCards.Count);
+
+        for (int i = 0; i < cardsToDeal; i++)
+        {
+            CharacterCardDefinition definition = _cardDefinitions[i];
+            CardView view = _handCards[i];
+            if (view == null)
+            {
+                continue;
+            }
+
+            view.gameObject.SetActive(true);
+            view.SetData(definition);
+            UpdateCardTransform(view.RectTransform);
+        }
+
+        if (_drawPile.Count > 0)
+        {
+            for (int i = _drawPile.Count - 1; i >= 0; i--)
+            {
+                _drawPile[i].gameObject.SetActive(false);
+            }
+        }
+    }
+
+    private void UpdateCardTransform(RectTransform rect)
+    {
+        if (rect == null)
+        {
+            return;
+        }
+
+        rect.SetParent(transform, false);
+        rect.localScale = Vector3.one;
+        rect.anchoredPosition = Vector2.zero;
+        rect.localRotation = Quaternion.identity;
+    }
+
+    private void Shuffle<T>(IList<T> collection)
+    {
+        if (collection == null)
+        {
+            return;
+        }
+
+        for (int i = collection.Count - 1; i > 0; i--)
+        {
+            int swapIndex = _random.Next(i + 1);
+            (collection[i], collection[swapIndex]) = (collection[swapIndex], collection[i]);
         }
     }
 
