@@ -153,7 +153,7 @@ public class CharacterStats
 
 public static class CharacterStatsParser
 {
-    private static readonly Regex CharacterRegex = new Regex("\"(?<id>[^\"]+)\"\\s*:\\s*\{(?<body>[^}]*)\}", RegexOptions.Compiled | RegexOptions.Multiline);
+    private static readonly Regex CharacterRegex = new Regex("\"(?<id>[^\"]+)\"\\s*:\\s*\\{(?<body>[^}]*)\\}", RegexOptions.Compiled | RegexOptions.Multiline);
     private static readonly Regex FieldRegex = new Regex("\"(?<key>[^\"]+)\"\\s*:\\s*(?<value>-?\\d+)", RegexOptions.Compiled | RegexOptions.Multiline);
 
     public static Dictionary<string, CharacterStats> Parse(string json)
