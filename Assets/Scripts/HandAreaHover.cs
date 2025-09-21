@@ -403,6 +403,7 @@ public class HandAreaHover : MonoBehaviour, IPointerEnterHandler, IPointerExitHa
                 view = child.gameObject.AddComponent<CardView>();
             }
 
+            EnsureHandCardDisplay(view);
             _handCards.Add(view);
         }
 
@@ -433,6 +434,7 @@ public class HandAreaHover : MonoBehaviour, IPointerEnterHandler, IPointerExitHa
                     view = cardObject.AddComponent<CardView>();
                 }
 
+                EnsureHandCardDisplay(view);
                 _handCards.Add(view);
             }
         }
@@ -500,6 +502,7 @@ public class HandAreaHover : MonoBehaviour, IPointerEnterHandler, IPointerExitHa
 
             view.gameObject.SetActive(true);
             view.SetData(definition);
+            EnsureHandCardDisplay(view);
             UpdateCardTransform(view.RectTransform);
         }
 
@@ -709,6 +712,7 @@ public class HandAreaHover : MonoBehaviour, IPointerEnterHandler, IPointerExitHa
 
         _activePreviewDefinition = sourceView.Definition;
         previewView.SetData(_activePreviewDefinition);
+        EnsureHandCardDisplay(previewView);
         ApplyPreviewTransform();
 
         if (_previewRectTransform != null && !_previewRectTransform.gameObject.activeSelf)
@@ -729,6 +733,48 @@ public class HandAreaHover : MonoBehaviour, IPointerEnterHandler, IPointerExitHa
         if (_previewRectTransform != null)
         {
             _previewRectTransform.gameObject.SetActive(false);
+        }
+    }
+
+    private void EnsureHandCardDisplay(CardView view)
+    {
+        if (view == null)
+        {
+            return;
+        }
+
+        CardStatVisibilityController visibilityController = view.GetComponent<CardStatVisibilityController>();
+        if (visibilityController != null)
+        {
+            visibilityController.ForceHandDisplay();
+            return;
+        }
+
+        Transform viewTransform = view.transform;
+        SetChildActive(viewTransform, "Canvas/Extra Attack", false);
+        SetChildActive(viewTransform, "Canvas/AOE", false);
+        SetChildActive(viewTransform, "Canvas/Regeneration", false);
+        SetChildActive(viewTransform, "Canvas/Luck", false);
+        SetChildActive(viewTransform, "Canvas/Score", true);
+    }
+
+    private static void SetChildActive(Transform root, string childPath, bool isActive)
+    {
+        if (root == null || string.IsNullOrEmpty(childPath))
+        {
+            return;
+        }
+
+        Transform child = root.Find(childPath);
+        if (child == null)
+        {
+            return;
+        }
+
+        GameObject childObject = child.gameObject;
+        if (childObject.activeSelf != isActive)
+        {
+            childObject.SetActive(isActive);
         }
     }
 
