@@ -18,33 +18,19 @@ public class MonsterView : MonoBehaviour
 
     private static readonly Dictionary<string, Dictionary<string, MonsterStats>> Cache = new Dictionary<string, Dictionary<string, MonsterStats>>(StringComparer.OrdinalIgnoreCase);
 
-    public string MonsterId => monsterId;
+    public int BaseAttack => _baseAttack;
+    public int BaseHealth => _baseHealth;
+    public int CurrentAttack => _currentAttack;
+    public int CurrentHealth => _currentHealth;
+    public bool HasAttackValue => _hasAttackValue;
+    public bool HasHealthValue => _hasHealthValue;
 
-    public void SetMonsterId(string id, bool applyImmediately = true)
-    {
-        string normalizedId = id ?? string.Empty;
-        if (string.Equals(monsterId, normalizedId, StringComparison.Ordinal))
-        {
-            if (applyImmediately)
-            {
-                ApplyMonsterData();
-            }
-
-            return;
-        }
-
-        monsterId = normalizedId;
-
-        if (applyImmediately)
-        {
-            ApplyMonsterData();
-        }
-    }
-
-    public void RefreshView()
-    {
-        ApplyMonsterData();
-    }
+    private int _baseAttack;
+    private int _baseHealth;
+    private int _currentAttack;
+    private int _currentHealth;
+    private bool _hasAttackValue;
+    private bool _hasHealthValue;
 
     private void Awake()
     {
@@ -99,26 +85,61 @@ public class MonsterView : MonoBehaviour
 
     private void ApplyMonsterData()
     {
+        ResetRuntimeCache();
+
         if (string.IsNullOrWhiteSpace(monsterId))
         {
-            SetText(attackValueText, string.Empty);
-            SetText(healthValueText, string.Empty);
+            RefreshStatTexts();
             return;
         }
 
         MonsterStats stats = GetMonsterStats(monsterId);
         if (stats == null)
         {
-            SetText(attackValueText, string.Empty);
-            SetText(healthValueText, string.Empty);
+            RefreshStatTexts();
             return;
         }
 
-        SetText(attackValueText, stats.attackAssigned ? stats.attack.ToString() : string.Empty);
-        SetText(healthValueText, stats.healthAssigned ? stats.health.ToString() : string.Empty);
+        _hasAttackValue = stats.attackAssigned;
+        _hasHealthValue = stats.healthAssigned;
+        _baseAttack = stats.attack;
+        _baseHealth = stats.health;
+        _currentAttack = _baseAttack;
+        _currentHealth = _baseHealth;
+
+        RefreshStatTexts();
 
         UpdatePortrait(monsterId);
         gameObject.name = monsterId;
+    }
+
+    public void ResetCombatStats()
+    {
+        _currentAttack = _baseAttack;
+        _currentHealth = _baseHealth;
+        RefreshStatTexts();
+    }
+
+    public void SetCurrentAttack(int value)
+    {
+        _currentAttack = Mathf.Max(0, value);
+        RefreshStatTexts();
+    }
+
+    public void SetCurrentHealth(int value)
+    {
+        _currentHealth = Mathf.Max(0, value);
+        RefreshStatTexts();
+    }
+
+    public void ApplyDamage(int amount)
+    {
+        if (amount <= 0)
+        {
+            return;
+        }
+
+        SetCurrentHealth(_currentHealth - amount);
     }
 
     private void UpdatePortrait(string id)
@@ -158,6 +179,22 @@ public class MonsterView : MonoBehaviour
         }
 
         return spriteResourceFolder + "/" + id;
+    }
+
+    private void RefreshStatTexts()
+    {
+        SetText(attackValueText, _hasAttackValue ? _currentAttack.ToString() : string.Empty);
+        SetText(healthValueText, _hasHealthValue ? _currentHealth.ToString() : string.Empty);
+    }
+
+    private void ResetRuntimeCache()
+    {
+        _baseAttack = 0;
+        _baseHealth = 0;
+        _currentAttack = 0;
+        _currentHealth = 0;
+        _hasAttackValue = false;
+        _hasHealthValue = false;
     }
 
     private static void SetText(TMP_Text textComponent, string value)

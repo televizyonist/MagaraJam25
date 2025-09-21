@@ -35,8 +35,12 @@ public class BattleResolver : MonoBehaviour
     [SerializeField] private Transform thirdCameraPosition;
     [SerializeField] private float thirdCameraMoveSpeed = 5f;
 
+    [Header("Combat")]
+    [SerializeField] private float combatStartDelay = 5f;
+    [SerializeField] private float attackStepDelay = 0.5f;
+
     private Coroutine _cameraSequenceRoutine;
-    private bool _hasAppliedThirdCameraFocus;
+    private Coroutine _combatRoutine;
 
     private const string LogPrefix = "[BattleResolver]";
     private const int FocusSlotMinimumIndex = 4;
@@ -126,6 +130,315 @@ public class BattleResolver : MonoBehaviour
         HideHandArea();
         StartCameraSequence();
         ExecuteBattle();
+        StartCombatCountdown();
+    }
+
+    private void StartCombatCountdown()
+    {
+        if (_combatRoutine != null)
+        {
+            StopCoroutine(_combatRoutine);
+        }
+
+        LogDebug($"Combat countdown started. Combat will begin after {combatStartDelay:F2} second(s).");
+        _combatRoutine = StartCoroutine(RunCombatAfterDelay());
+    }
+
+    private IEnumerator RunCombatAfterDelay()
+    {
+        if (combatStartDelay > 0f)
+        {
+            yield return new WaitForSeconds(combatStartDelay);
+        }
+
+        yield return RunCombatLoop();
+        _combatRoutine = null;
+    }
+
+    private IEnumerator RunCombatLoop()
+    {
+        List<CharacterCombatant> characters = BuildCharacterCombatants();
+        List<MonsterCombatant> monsters = BuildMonsterCombatants();
+
+        if (characters.Count == 0)
+        {
+            LogWarning("Combat aborted because no character combatants were found.");
+            yield break;
+        }
+
+        if (monsters.Count == 0)
+        {
+            LogWarning("Combat aborted because no monster combatants were found in the scene.");
+            yield break;
+        }
+
+        LogDebug($"Combat starting with {characters.Count} character(s) and {monsters.Count} monster(s).");
+
+        int roundIndex = 1;
+        while (HasLivingCharacters(characters) && HasLivingMonsters(monsters))
+        {
+            LogDebug($"-- Combat Round {roundIndex} --");
+
+            yield return ExecuteCharacterAttackPhase(roundIndex, characters, monsters);
+            if (!HasLivingMonsters(monsters))
+            {
+                LogDebug($"Combat ended during round {roundIndex}; all monsters defeated.");
+                break;
+            }
+
+            yield return ExecuteMonsterAttackPhase(roundIndex, monsters, characters);
+            if (!HasLivingCharacters(characters))
+            {
+                LogDebug($"Combat ended during round {roundIndex}; all characters defeated.");
+                break;
+            }
+
+            roundIndex++;
+        }
+
+        string winner = HasLivingCharacters(characters) ? "characters" : "monsters";
+        LogDebug($"Combat finished after {roundIndex} round(s). Surviving team: {winner}.");
+    }
+
+    private IEnumerator ExecuteCharacterAttackPhase(int roundIndex, List<CharacterCombatant> characters, List<MonsterCombatant> monsters)
+    {
+        if (characters == null || monsters == null)
+        {
+            yield break;
+        }
+
+        for (int i = 0; i < characters.Count; i++)
+        {
+            CharacterCombatant attacker = characters[i];
+            if (attacker == null || !attacker.IsAlive)
+            {
+                continue;
+            }
+
+            MonsterCombatant target = GetFirstLivingMonster(monsters);
+            if (target == null)
+            {
+                LogDebug($"Round {roundIndex}: No living monster found for {attacker.Label} to attack.");
+                break;
+            }
+
+            int damage = Mathf.Max(0, attacker.Attack);
+            LogDebug($"Round {roundIndex}: {attacker.Label} attacks {target.Label} for {damage} damage.");
+
+            if (damage > 0)
+            {
+                target.ApplyDamage(damage);
+                if (!target.IsAlive)
+                {
+                    LogDebug($"Round {roundIndex}: {target.Label} has been defeated.");
+                }
+            }
+            else
+            {
+                LogDebug($"Round {roundIndex}: {attacker.Label} has no attack value and deals no damage.");
+            }
+
+            if (attackStepDelay > 0f)
+            {
+                yield return new WaitForSeconds(attackStepDelay);
+            }
+            else
+            {
+                yield return null;
+            }
+
+            if (!HasLivingMonsters(monsters))
+            {
+                break;
+            }
+        }
+    }
+
+    private IEnumerator ExecuteMonsterAttackPhase(int roundIndex, List<MonsterCombatant> monsters, List<CharacterCombatant> characters)
+    {
+        if (monsters == null || characters == null)
+        {
+            yield break;
+        }
+
+        for (int i = 0; i < monsters.Count; i++)
+        {
+            MonsterCombatant attacker = monsters[i];
+            if (attacker == null || !attacker.IsAlive)
+            {
+                continue;
+            }
+
+            CharacterCombatant target = GetFirstLivingCharacter(characters);
+            if (target == null)
+            {
+                LogDebug($"Round {roundIndex}: No living character found for {attacker.Label} to attack.");
+                break;
+            }
+
+            int damage = Mathf.Max(0, attacker.Attack);
+            LogDebug($"Round {roundIndex}: {attacker.Label} attacks {target.Label} for {damage} damage.");
+
+            if (damage > 0)
+            {
+                target.ApplyDamage(damage);
+                if (!target.IsAlive)
+                {
+                    LogDebug($"Round {roundIndex}: {target.Label} has been defeated.");
+                }
+            }
+            else
+            {
+                LogDebug($"Round {roundIndex}: {attacker.Label} has no attack value and deals no damage.");
+            }
+
+            if (attackStepDelay > 0f)
+            {
+                yield return new WaitForSeconds(attackStepDelay);
+            }
+            else
+            {
+                yield return null;
+            }
+
+            if (!HasLivingCharacters(characters))
+            {
+                break;
+            }
+        }
+    }
+
+    private static bool HasLivingCharacters(List<CharacterCombatant> characters)
+    {
+        if (characters == null)
+        {
+            return false;
+        }
+
+        for (int i = 0; i < characters.Count; i++)
+        {
+            if (characters[i] != null && characters[i].IsAlive)
+            {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    private static bool HasLivingMonsters(List<MonsterCombatant> monsters)
+    {
+        if (monsters == null)
+        {
+            return false;
+        }
+
+        for (int i = 0; i < monsters.Count; i++)
+        {
+            if (monsters[i] != null && monsters[i].IsAlive)
+            {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    private static CharacterCombatant GetFirstLivingCharacter(List<CharacterCombatant> characters)
+    {
+        if (characters == null)
+        {
+            return null;
+        }
+
+        for (int i = 0; i < characters.Count; i++)
+        {
+            CharacterCombatant combatant = characters[i];
+            if (combatant != null && combatant.IsAlive)
+            {
+                return combatant;
+            }
+        }
+
+        return null;
+    }
+
+    private static MonsterCombatant GetFirstLivingMonster(List<MonsterCombatant> monsters)
+    {
+        if (monsters == null)
+        {
+            return null;
+        }
+
+        for (int i = 0; i < monsters.Count; i++)
+        {
+            MonsterCombatant combatant = monsters[i];
+            if (combatant != null && combatant.IsAlive)
+            {
+                return combatant;
+            }
+        }
+
+        return null;
+    }
+
+    private List<CharacterCombatant> BuildCharacterCombatants()
+    {
+        var combatants = new List<CharacterCombatant>();
+
+        if (_slotStates.Count == 0)
+        {
+            LogWarning("Combat requested but no populated character slots were detected.");
+            return combatants;
+        }
+
+        for (int i = 0; i < _slotStates.Count; i++)
+        {
+            SlotBattleState state = _slotStates[i];
+            if (state == null || !state.HasCardData)
+            {
+                continue;
+            }
+
+            CharacterStats sourceStats = state.FinalStats ?? state.BaseStats;
+            if (sourceStats == null && state.View != null && state.View.Definition != null)
+            {
+                sourceStats = state.View.Definition.stats;
+            }
+
+            CharacterCombatant combatant = new CharacterCombatant(this, state.View, sourceStats, state.GetDebugLabel());
+            combatants.Add(combatant);
+            LogDebug($"Registered combatant {combatant.Label}: ATK {combatant.Attack} | HP {combatant.CurrentHealth} | ARM {combatant.CurrentArmor}.");
+        }
+
+        return combatants;
+    }
+
+    private List<MonsterCombatant> BuildMonsterCombatants()
+    {
+        var combatants = new List<MonsterCombatant>();
+
+        MonsterView[] monsterViews = FindObjectsOfType<MonsterView>(true);
+        if (monsterViews == null || monsterViews.Length == 0)
+        {
+            LogWarning("No MonsterView instances were found when building monster combatants.");
+            return combatants;
+        }
+
+        for (int i = 0; i < monsterViews.Length; i++)
+        {
+            MonsterView view = monsterViews[i];
+            if (view == null || !view.gameObject.activeInHierarchy)
+            {
+                continue;
+            }
+
+            MonsterCombatant combatant = new MonsterCombatant(this, view);
+            combatants.Add(combatant);
+            LogDebug($"Registered monster {combatant.Label}: ATK {combatant.Attack} | HP {combatant.CurrentHealth}.");
+        }
+
+        return combatants;
     }
 
     private void HideBattleButton()
@@ -804,6 +1117,133 @@ public class BattleResolver : MonoBehaviour
             }
 
             return builder.ToString();
+        }
+    }
+
+    private sealed class CharacterCombatant
+    {
+        private readonly BattleResolver _owner;
+        private readonly string _label;
+
+        public CharacterCombatant(BattleResolver owner, CardView view, CharacterStats stats, string label)
+        {
+            _owner = owner;
+            View = view;
+            Stats = stats != null ? new CharacterStats(stats) : new CharacterStats();
+            _label = !string.IsNullOrWhiteSpace(label) ? label : ResolveName();
+            SyncView();
+        }
+
+        public CardView View { get; }
+        public CharacterStats Stats { get; }
+
+        public string Label => !string.IsNullOrWhiteSpace(_label) ? _label : ResolveName();
+
+        public int Attack => Stats?.attack ?? 0;
+        public int CurrentHealth => Stats?.health ?? 0;
+        public int CurrentArmor => Stats?.armor ?? 0;
+        public bool IsAlive => Stats != null && Stats.health > 0;
+
+        public void ApplyDamage(int damage)
+        {
+            if (Stats == null || damage <= 0 || !IsAlive)
+            {
+                return;
+            }
+
+            int remaining = damage;
+            if (Stats.armor > 0)
+            {
+                int absorbed = Math.Min(Stats.armor, remaining);
+                Stats.armor -= absorbed;
+                remaining -= absorbed;
+                _owner?.LogDebug($"{Label} absorbed {absorbed} damage with armor. Remaining armor: {Stats.armor}.");
+            }
+
+            if (remaining > 0)
+            {
+                int previousHealth = Stats.health;
+                Stats.health = Mathf.Max(0, Stats.health - remaining);
+                int applied = previousHealth - Stats.health;
+                _owner?.LogDebug($"{Label} took {applied} damage to health. Remaining health: {Stats.health}.");
+            }
+
+            SyncView();
+        }
+
+        private void SyncView()
+        {
+            if (View != null)
+            {
+                View.ApplyStats(Stats);
+            }
+        }
+
+        private string ResolveName()
+        {
+            if (View != null && View.Definition != null)
+            {
+                if (!string.IsNullOrWhiteSpace(View.Definition.name))
+                {
+                    return View.Definition.name;
+                }
+
+                if (!string.IsNullOrWhiteSpace(View.Definition.id))
+                {
+                    return View.Definition.id;
+                }
+            }
+
+            return View != null ? View.gameObject.name : "<character>";
+        }
+    }
+
+    private sealed class MonsterCombatant
+    {
+        private readonly BattleResolver _owner;
+        private readonly string _label;
+
+        public MonsterCombatant(BattleResolver owner, MonsterView view)
+        {
+            _owner = owner;
+            View = view;
+            if (View != null)
+            {
+                View.ResetCombatStats();
+            }
+
+            _label = ResolveName();
+        }
+
+        public MonsterView View { get; }
+
+        public string Label => _label;
+
+        public int Attack => View != null ? View.CurrentAttack : 0;
+        public int CurrentHealth => View != null ? View.CurrentHealth : 0;
+        public bool IsAlive => View != null && (!View.HasHealthValue || View.CurrentHealth > 0);
+
+        public void ApplyDamage(int damage)
+        {
+            if (View == null || damage <= 0 || !IsAlive)
+            {
+                return;
+            }
+
+            int previousHealth = View.CurrentHealth;
+            View.ApplyDamage(damage);
+            int applied = previousHealth - View.CurrentHealth;
+            _owner?.LogDebug($"{Label} took {applied} damage. Remaining health: {View.CurrentHealth}.");
+        }
+
+        private string ResolveName()
+        {
+            if (View != null && View.gameObject != null && !string.IsNullOrWhiteSpace(View.gameObject.name))
+            {
+                return View.gameObject.name;
+            }
+
+            return "<monster>";
         }
     }
 }
