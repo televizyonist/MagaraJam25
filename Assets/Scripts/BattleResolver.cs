@@ -11,11 +11,11 @@ public class BattleResolver : MonoBehaviour
     {
         { "baba", CharacterStats.StatType.Attack },
         { "evlat", CharacterStats.StatType.Health },
-        { "kardes", CharacterStats.StatType.ExtraAttack },
+        { "kardes", CharacterStats.StatType.AreaDamage },
         { "anne", CharacterStats.StatType.Armor },
         { "arkadas", CharacterStats.StatType.Luck },
         { "es", CharacterStats.StatType.Regeneration },
-        { "akraba", CharacterStats.StatType.AreaDamage }
+        { "akraba", CharacterStats.StatType.Health }
     };
 
     [SerializeField] private bool enableDebugLogging = true;
