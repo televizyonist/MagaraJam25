@@ -1,3 +1,4 @@
+using System;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -116,6 +117,21 @@ public class CardView : MonoBehaviour
         if (portraitImage == null)
         {
             portraitImage = FindImageUnder("Image");
+
+            if (portraitImage == null)
+            {
+                portraitImage = FindImageUnder("Canvas/Image");
+            }
+
+            if (portraitImage == null)
+            {
+                portraitImage = GetComponentInChildren<Image>(true);
+            }
+
+            if (portraitImage == null)
+            {
+                Debug.LogWarning($"{GetDebugContext()} Unable to automatically find portrait Image component. Please assign it in the inspector.", this);
+            }
         }
     }
 
@@ -123,32 +139,114 @@ public class CardView : MonoBehaviour
     {
         if (portraitImage == null)
         {
+            Debug.LogWarning($"{GetDebugContext()} Portrait image reference is missing; cannot load sprite.", this);
             return;
         }
 
-        Sprite sprite = null;
-
         string spriteName = ResolveSpriteName();
-
-        if (!string.IsNullOrEmpty(spriteName))
+        if (string.IsNullOrWhiteSpace(spriteName))
         {
-            string folder = string.IsNullOrEmpty(characterSpriteResourceFolder)
-                ? string.Empty
-                : characterSpriteResourceFolder.Trim();
-
-            string resourcePath = string.IsNullOrEmpty(folder)
-                ? spriteName
-                : $"{folder}/{spriteName}";
-
-            sprite = Resources.Load<Sprite>(resourcePath);
+            Debug.LogWarning($"{GetDebugContext()} Unable to resolve portrait sprite name. Check Name text or definition values.", this);
         }
+        else
+        {
+            Debug.Log($"{GetDebugContext()} Resolving portrait sprite for '{spriteName}'.", this);
+        }
+        Sprite sprite = LoadPortraitSprite(spriteName);
 
         portraitImage.sprite = sprite;
         portraitImage.enabled = sprite != null;
+
+        if (sprite != null)
+        {
+            Debug.Log($"{GetDebugContext()} Applied portrait sprite '{sprite.name}'.", this);
+        }
+        else if (!string.IsNullOrWhiteSpace(spriteName))
+        {
+            Debug.LogWarning($"{GetDebugContext()} No sprite could be found for '{spriteName}'.", this);
+        }
+    }
+
+    private Sprite LoadPortraitSprite(string spriteName)
+    {
+        if (string.IsNullOrWhiteSpace(spriteName))
+        {
+            Debug.LogWarning($"{GetDebugContext()} Sprite name is empty; skipping load.", this);
+            return null;
+        }
+
+        spriteName = spriteName.Trim();
+
+        string folder = string.IsNullOrWhiteSpace(characterSpriteResourceFolder)
+            ? "Characters"
+            : characterSpriteResourceFolder.Trim();
+
+        Sprite sprite = null;
+
+        string resourcePath = string.IsNullOrEmpty(folder)
+            ? spriteName
+            : $"{folder}/{spriteName}";
+
+        Debug.Log($"{GetDebugContext()} Attempting to load sprite at '{resourcePath}'.", this);
+        sprite = Resources.Load<Sprite>(resourcePath);
+
+        if (sprite != null)
+        {
+            Debug.Log($"{GetDebugContext()} Successfully loaded sprite '{sprite.name}' at '{resourcePath}'.", this);
+            return sprite;
+        }
+
+        Debug.LogWarning($"{GetDebugContext()} Could not find sprite at '{resourcePath}'. Initiating fallback search.", this);
+
+        if (!string.IsNullOrEmpty(folder))
+        {
+            Sprite[] candidates = Resources.LoadAll<Sprite>(folder);
+            int candidateCount = candidates != null ? candidates.Length : 0;
+            Debug.Log($"{GetDebugContext()} Loaded {candidateCount} candidate sprites from folder '{folder}'.", this);
+
+            if (candidates != null)
+            {
+                for (int i = 0; i < candidates.Length; i++)
+                {
+                    Sprite candidate = candidates[i];
+                    if (candidate == null)
+                    {
+                        continue;
+                    }
+
+                    if (string.Equals(candidate.name, spriteName, StringComparison.OrdinalIgnoreCase))
+                    {
+                        Debug.Log($"{GetDebugContext()} Fallback matched sprite '{candidate.name}' (case-insensitive).", this);
+                        sprite = candidate;
+                        break;
+                    }
+                }
+            }
+            else
+            {
+                Debug.LogWarning($"{GetDebugContext()} Fallback load returned no sprites from folder '{folder}'.", this);
+            }
+        }
+        else
+        {
+            Debug.LogWarning($"{GetDebugContext()} Character sprite resource folder is empty; fallback search skipped.", this);
+        }
+
+        if (sprite == null)
+        {
+            Debug.LogWarning($"{GetDebugContext()} Fallback search did not find a sprite matching '{spriteName}'.", this);
+        }
+
+        return sprite;
     }
 
     private string ResolveSpriteName()
     {
+        if (nameText != null && !string.IsNullOrEmpty(nameText.text))
+        {
+            return nameText.text.Trim();
+        }
+
         if (_definition != null)
         {
             if (!string.IsNullOrEmpty(_definition.name))
@@ -160,11 +258,6 @@ public class CardView : MonoBehaviour
             {
                 return _definition.id.Trim();
             }
-        }
-
-        if (nameText != null && !string.IsNullOrEmpty(nameText.text))
-        {
-            return nameText.text.Trim();
         }
 
         if (!string.IsNullOrEmpty(gameObject.name))
@@ -195,5 +288,14 @@ public class CardView : MonoBehaviour
         }
 
         return target.GetComponentInChildren<Image>(true);
+    }
+
+    private string GetDebugContext()
+    {
+        string cardName = gameObject != null && !string.IsNullOrEmpty(gameObject.name)
+            ? gameObject.name
+            : "<unnamed>";
+
+        return $"[CardView:{cardName}]";
     }
 }
