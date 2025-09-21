@@ -116,7 +116,7 @@ public class SlotRelationshipDisplay : MonoBehaviour
                 continue;
             }
 
-            _connections.Add(new RelationshipConnection(fromSlot, toSlot, text));
+            _connections.Add(new RelationshipConnection(fromIndex, fromSlot, toIndex, toSlot, text));
         }
     }
 
@@ -177,7 +177,25 @@ public class SlotRelationshipDisplay : MonoBehaviour
         {
             string relationFromTo = GetDirectRelationship(fromDefinition, toDefinition);
             string relationToFrom = GetDirectRelationship(toDefinition, fromDefinition);
-            slotRelation = SelectPreferredRelationshipText(relationFromTo, relationToFrom, previousRelationship);
+            int fromIndex = connection.FromIndex;
+            int toIndex = connection.ToIndex;
+
+            if (fromIndex > toIndex)
+            {
+                slotRelation = !string.IsNullOrWhiteSpace(relationFromTo)
+                    ? relationFromTo
+                    : relationToFrom;
+            }
+            else if (toIndex > fromIndex)
+            {
+                slotRelation = !string.IsNullOrWhiteSpace(relationToFrom)
+                    ? relationToFrom
+                    : relationFromTo;
+            }
+            else
+            {
+                slotRelation = SelectPreferredRelationshipText(relationFromTo, relationToFrom, previousRelationship);
+            }
         }
 
         CharacterCardDefinition activeDefinition = _hoveredCardDefinition ?? _draggedCardDefinition;
@@ -642,16 +660,20 @@ public class SlotRelationshipDisplay : MonoBehaviour
 
     private sealed class RelationshipConnection
     {
-        public RelationshipConnection(CardSlot fromSlot, CardSlot toSlot, TMP_Text label)
+        public RelationshipConnection(int fromIndex, CardSlot fromSlot, int toIndex, CardSlot toSlot, TMP_Text label)
         {
+            FromIndex = fromIndex;
             FromSlot = fromSlot;
+            ToIndex = toIndex;
             ToSlot = toSlot;
             Label = label;
             LastActive = label != null && label.gameObject.activeSelf;
             LastText = label != null ? label.text : string.Empty;
         }
 
+        public int FromIndex { get; }
         public CardSlot FromSlot { get; }
+        public int ToIndex { get; }
         public CardSlot ToSlot { get; }
         public TMP_Text Label { get; }
         public bool LastActive { get; set; }
