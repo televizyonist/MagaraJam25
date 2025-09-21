@@ -187,6 +187,11 @@ public class CardView : MonoBehaviour
 
     private string ResolveSpriteName()
     {
+        if (nameText != null && !string.IsNullOrEmpty(nameText.text))
+        {
+            return nameText.text.Trim();
+        }
+
         if (_definition != null)
         {
             if (!string.IsNullOrEmpty(_definition.name))
@@ -198,11 +203,6 @@ public class CardView : MonoBehaviour
             {
                 return _definition.id.Trim();
             }
-        }
-
-        if (nameText != null && !string.IsNullOrEmpty(nameText.text))
-        {
-            return nameText.text.Trim();
         }
 
         if (!string.IsNullOrEmpty(gameObject.name))
