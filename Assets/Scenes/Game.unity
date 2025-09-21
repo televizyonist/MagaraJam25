@@ -1349,7 +1349,7 @@ GameObject:
   - component: {fileID: 1694427142}
   - component: {fileID: 1694427141}
   m_Layer: 5
-  m_Name: "Sava\u015F"
+  m_Name: Go
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
