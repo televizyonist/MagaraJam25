@@ -921,15 +921,15 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 611902057692187596, guid: eae1bcacdd5af9f4f9b0c2e31f4c79bb, type: 3}
       propertyPath: m_LocalScale.x
-      value: 0.01
+      value: 0.015000001
       objectReference: {fileID: 0}
     - target: {fileID: 611902057692187596, guid: eae1bcacdd5af9f4f9b0c2e31f4c79bb, type: 3}
       propertyPath: m_LocalScale.y
-      value: 0.01
+      value: 0.015000001
       objectReference: {fileID: 0}
     - target: {fileID: 611902057692187596, guid: eae1bcacdd5af9f4f9b0c2e31f4c79bb, type: 3}
       propertyPath: m_LocalScale.z
-      value: 0.01
+      value: 0.015000001
       objectReference: {fileID: 0}
     - target: {fileID: 2647141232727049431, guid: eae1bcacdd5af9f4f9b0c2e31f4c79bb, type: 3}
       propertyPath: m_LocalPosition.x
@@ -973,15 +973,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3325203644065190599, guid: eae1bcacdd5af9f4f9b0c2e31f4c79bb, type: 3}
       propertyPath: m_LocalScale.x
-      value: 0.01
+      value: 0.015000001
       objectReference: {fileID: 0}
     - target: {fileID: 3325203644065190599, guid: eae1bcacdd5af9f4f9b0c2e31f4c79bb, type: 3}
       propertyPath: m_LocalScale.y
-      value: 0.01
+      value: 0.015000001
       objectReference: {fileID: 0}
     - target: {fileID: 3325203644065190599, guid: eae1bcacdd5af9f4f9b0c2e31f4c79bb, type: 3}
       propertyPath: m_LocalScale.z
-      value: 0.01
+      value: 0.015000001
       objectReference: {fileID: 0}
     - target: {fileID: 5084591136634289520, guid: eae1bcacdd5af9f4f9b0c2e31f4c79bb, type: 3}
       propertyPath: m_Size.x
@@ -1005,15 +1005,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5297412306138827382, guid: eae1bcacdd5af9f4f9b0c2e31f4c79bb, type: 3}
       propertyPath: m_LocalScale.x
-      value: 1.2
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 5297412306138827382, guid: eae1bcacdd5af9f4f9b0c2e31f4c79bb, type: 3}
       propertyPath: m_LocalScale.y
-      value: 1.2
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 5297412306138827382, guid: eae1bcacdd5af9f4f9b0c2e31f4c79bb, type: 3}
       propertyPath: m_LocalScale.z
-      value: 1.2
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 5297412306138827382, guid: eae1bcacdd5af9f4f9b0c2e31f4c79bb, type: 3}
       propertyPath: m_ConstrainProportionsScale
@@ -1021,27 +1021,27 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5888710651224610731, guid: eae1bcacdd5af9f4f9b0c2e31f4c79bb, type: 3}
       propertyPath: m_LocalScale.x
-      value: 0.01
+      value: 0.015000001
       objectReference: {fileID: 0}
     - target: {fileID: 5888710651224610731, guid: eae1bcacdd5af9f4f9b0c2e31f4c79bb, type: 3}
       propertyPath: m_LocalScale.y
-      value: 0.01
+      value: 0.015000001
       objectReference: {fileID: 0}
     - target: {fileID: 5888710651224610731, guid: eae1bcacdd5af9f4f9b0c2e31f4c79bb, type: 3}
       propertyPath: m_LocalScale.z
-      value: 0.01
+      value: 0.015000001
       objectReference: {fileID: 0}
     - target: {fileID: 5997400333642128639, guid: eae1bcacdd5af9f4f9b0c2e31f4c79bb, type: 3}
       propertyPath: m_LocalScale.x
-      value: 1.2
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 5997400333642128639, guid: eae1bcacdd5af9f4f9b0c2e31f4c79bb, type: 3}
       propertyPath: m_LocalScale.y
-      value: 1.2
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 5997400333642128639, guid: eae1bcacdd5af9f4f9b0c2e31f4c79bb, type: 3}
       propertyPath: m_LocalScale.z
-      value: 1.2
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 5997400333642128639, guid: eae1bcacdd5af9f4f9b0c2e31f4c79bb, type: 3}
       propertyPath: m_ConstrainProportionsScale
@@ -1049,27 +1049,27 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6438838441299031752, guid: eae1bcacdd5af9f4f9b0c2e31f4c79bb, type: 3}
       propertyPath: m_LocalScale.x
-      value: 0.01
+      value: 0.015000001
       objectReference: {fileID: 0}
     - target: {fileID: 6438838441299031752, guid: eae1bcacdd5af9f4f9b0c2e31f4c79bb, type: 3}
       propertyPath: m_LocalScale.y
-      value: 0.01
+      value: 0.015000001
       objectReference: {fileID: 0}
     - target: {fileID: 6438838441299031752, guid: eae1bcacdd5af9f4f9b0c2e31f4c79bb, type: 3}
       propertyPath: m_LocalScale.z
-      value: 0.01
+      value: 0.015000001
       objectReference: {fileID: 0}
     - target: {fileID: 7608008411042709181, guid: eae1bcacdd5af9f4f9b0c2e31f4c79bb, type: 3}
       propertyPath: m_LocalScale.x
-      value: 0.01
+      value: 0.015000001
       objectReference: {fileID: 0}
     - target: {fileID: 7608008411042709181, guid: eae1bcacdd5af9f4f9b0c2e31f4c79bb, type: 3}
       propertyPath: m_LocalScale.y
-      value: 0.01
+      value: 0.015000001
       objectReference: {fileID: 0}
     - target: {fileID: 7608008411042709181, guid: eae1bcacdd5af9f4f9b0c2e31f4c79bb, type: 3}
       propertyPath: m_LocalScale.z
-      value: 0.01
+      value: 0.015000001
       objectReference: {fileID: 0}
     - target: {fileID: 8187553421447118944, guid: eae1bcacdd5af9f4f9b0c2e31f4c79bb, type: 3}
       propertyPath: m_Name
@@ -1077,15 +1077,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8541386157799479794, guid: eae1bcacdd5af9f4f9b0c2e31f4c79bb, type: 3}
       propertyPath: m_LocalScale.x
-      value: 0.01
+      value: 0.015000001
       objectReference: {fileID: 0}
     - target: {fileID: 8541386157799479794, guid: eae1bcacdd5af9f4f9b0c2e31f4c79bb, type: 3}
       propertyPath: m_LocalScale.y
-      value: 0.01
+      value: 0.015000001
       objectReference: {fileID: 0}
     - target: {fileID: 8541386157799479794, guid: eae1bcacdd5af9f4f9b0c2e31f4c79bb, type: 3}
       propertyPath: m_LocalScale.z
-      value: 0.01
+      value: 0.015000001
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
