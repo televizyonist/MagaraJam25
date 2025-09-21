@@ -10,6 +10,8 @@ public class SlotRelationshipDisplay : MonoBehaviour
     private readonly List<CardSlot> _allSlots = new List<CardSlot>();
     private readonly List<RelationshipConnection> _connections = new List<RelationshipConnection>();
 
+    private bool _forceHidden;
+
     private CardDragHandler _hoveredCard;
     private CharacterCardDefinition _hoveredCardDefinition;
     private CardDragHandler _hoveredBoardCard;
@@ -48,7 +50,32 @@ public class SlotRelationshipDisplay : MonoBehaviour
 
     private void Update()
     {
+        if (_forceHidden)
+        {
+            return;
+        }
+
         UpdateConnections();
+    }
+
+    public void SetForceHidden(bool hidden)
+    {
+        if (_forceHidden == hidden)
+        {
+            return;
+        }
+
+        _forceHidden = hidden;
+
+        if (_forceHidden)
+        {
+            HideAllConnections();
+            UpdateSlotGlows(null);
+        }
+        else
+        {
+            UpdateConnections();
+        }
     }
 
     private void Initialize()
@@ -122,6 +149,13 @@ public class SlotRelationshipDisplay : MonoBehaviour
 
     private void UpdateConnections()
     {
+        if (_forceHidden)
+        {
+            HideAllConnections();
+            UpdateSlotGlows(null);
+            return;
+        }
+
         if (_connections.Count == 0)
         {
             UpdateSlotGlows(null);
@@ -293,6 +327,27 @@ public class SlotRelationshipDisplay : MonoBehaviour
         }
 
         return shouldDisplayLabel;
+    }
+
+    private void HideAllConnections()
+    {
+        if (_connections.Count == 0)
+        {
+            return;
+        }
+
+        foreach (RelationshipConnection connection in _connections)
+        {
+            if (connection == null)
+            {
+                continue;
+            }
+
+            connection.RelationshipText = string.Empty;
+            connection.HighlightFrom = false;
+            connection.HighlightTo = false;
+            SetConnectionActive(connection, false);
+        }
     }
 
     private void UpdateSlotGlows(ISet<CardSlot> highlightedSlots)
