@@ -18,6 +18,8 @@ public class MonsterWaveController : MonoBehaviour
     [SerializeField] private bool includeInactiveMonsters = true;
 
     private readonly List<MonsterView> _monsterSlots = new List<MonsterView>();
+    private readonly Queue<string> _bagOfRandomMonsters = new Queue<string>();
+    private readonly List<string> _monsterShuffleBuffer = new List<string>();
     private bool _initialWaveSpawned;
     private int _currentWaveSize;
     private int _currentWaveNumber;
@@ -29,6 +31,7 @@ public class MonsterWaveController : MonoBehaviour
     private void Awake()
     {
         CollectMonsterSlots();
+        RefillMonsterBag();
         _currentWaveSize = Mathf.Clamp(initialWaveSize, 0, _monsterSlots.Count);
     }
 
@@ -157,6 +160,12 @@ public class MonsterWaveController : MonoBehaviour
             if (shouldBeActive)
             {
                 string monsterId = SelectRandomMonsterId();
+                if (string.IsNullOrEmpty(monsterId))
+                {
+                    Debug.LogWarning("[MonsterWaveController] Unable to assign a monster id because none were available in the bag.");
+                    continue;
+                }
+
                 slot.SetMonsterId(monsterId);
             }
         }
@@ -164,8 +173,22 @@ public class MonsterWaveController : MonoBehaviour
 
     private string SelectRandomMonsterId()
     {
-        int index = UnityEngine.Random.Range(0, availableMonsterIds.Count);
-        return availableMonsterIds[index];
+        if (availableMonsterIds == null || availableMonsterIds.Count == 0)
+        {
+            return string.Empty;
+        }
+
+        if (_bagOfRandomMonsters.Count == 0)
+        {
+            RefillMonsterBag();
+        }
+
+        if (_bagOfRandomMonsters.Count == 0)
+        {
+            return availableMonsterIds[UnityEngine.Random.Range(0, availableMonsterIds.Count)];
+        }
+
+        return _bagOfRandomMonsters.Dequeue();
     }
 
     private void ShuffleMonsterSlots()
@@ -176,6 +199,43 @@ public class MonsterWaveController : MonoBehaviour
             MonsterView temp = _monsterSlots[i];
             _monsterSlots[i] = _monsterSlots[swapIndex];
             _monsterSlots[swapIndex] = temp;
+        }
+    }
+
+    private void RefillMonsterBag()
+    {
+        _bagOfRandomMonsters.Clear();
+        _monsterShuffleBuffer.Clear();
+
+        if (availableMonsterIds == null)
+        {
+            return;
+        }
+
+        foreach (string monsterId in availableMonsterIds)
+        {
+            if (!string.IsNullOrWhiteSpace(monsterId))
+            {
+                _monsterShuffleBuffer.Add(monsterId);
+            }
+        }
+
+        if (_monsterShuffleBuffer.Count == 0)
+        {
+            return;
+        }
+
+        for (int i = _monsterShuffleBuffer.Count - 1; i > 0; i--)
+        {
+            int swapIndex = UnityEngine.Random.Range(0, i + 1);
+            string temp = _monsterShuffleBuffer[i];
+            _monsterShuffleBuffer[i] = _monsterShuffleBuffer[swapIndex];
+            _monsterShuffleBuffer[swapIndex] = temp;
+        }
+
+        for (int i = 0; i < _monsterShuffleBuffer.Count; i++)
+        {
+            _bagOfRandomMonsters.Enqueue(_monsterShuffleBuffer[i]);
         }
     }
 }

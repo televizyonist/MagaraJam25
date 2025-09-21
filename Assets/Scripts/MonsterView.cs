@@ -113,6 +113,19 @@ public class MonsterView : MonoBehaviour
         gameObject.name = monsterId;
     }
 
+    public void SetMonsterId(string id)
+    {
+        string normalizedId = id ?? string.Empty;
+        if (string.Equals(monsterId, normalizedId, StringComparison.Ordinal))
+        {
+            ApplyMonsterData();
+            return;
+        }
+
+        monsterId = normalizedId;
+        ApplyMonsterData();
+    }
+
     public void ResetCombatStats()
     {
         _currentAttack = _baseAttack;
