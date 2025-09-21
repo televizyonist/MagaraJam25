@@ -18,6 +18,7 @@ public class BattleResolver : MonoBehaviour
     };
 
     [SerializeField] private bool enableDebugLogging = true;
+    [SerializeField] private List<CardSlot> slotOverrides = new List<CardSlot>();
 
     private const string LogPrefix = "[BattleResolver]";
 
@@ -109,18 +110,87 @@ public class BattleResolver : MonoBehaviour
     {
         _slotStates.Clear();
 
-        CardSlot[] slots = GetComponentsInChildren<CardSlot>(true);
-        if (slots == null || slots.Length == 0)
+        List<CardSlot> resolvedSlots = new List<CardSlot>();
+        HashSet<CardSlot> uniqueSlots = new HashSet<CardSlot>();
+
+        void TryAddSlot(CardSlot candidate, string context = null, int index = -1)
         {
-            LogWarning("No CardSlot components found under BattleResolver. Ensure slots are parented correctly.");
+            if (candidate == null)
+            {
+                if (!string.IsNullOrEmpty(context))
+                {
+                    string label = index >= 0 ? $"{context} at index {index}" : context;
+                    LogWarning($"{label} is null. Skipping.");
+                }
+
+                return;
+            }
+
+            if (!uniqueSlots.Add(candidate))
+            {
+                if (!string.IsNullOrEmpty(context))
+                {
+                    string label = index >= 0 ? $"{context} at index {index}" : context;
+                    LogDebug($"{label} produced duplicate CardSlot reference '{candidate.name}'. Skipping duplicate.");
+                }
+
+                return;
+            }
+
+            resolvedSlots.Add(candidate);
+        }
+
+        CardSlot[] slots = GetComponentsInChildren<CardSlot>(true);
+        if (slots != null && slots.Length > 0)
+        {
+            for (int i = 0; i < slots.Length; i++)
+            {
+                TryAddSlot(slots[i]);
+            }
+
+            if (resolvedSlots.Count > 0)
+            {
+                LogDebug($"Found {resolvedSlots.Count} CardSlot component(s) to inspect.");
+            }
+        }
+        else if (slotOverrides != null && slotOverrides.Count > 0)
+        {
+            for (int i = 0; i < slotOverrides.Count; i++)
+            {
+                TryAddSlot(slotOverrides[i], "Slot override", i);
+            }
+
+            if (resolvedSlots.Count > 0)
+            {
+                LogDebug($"Using {resolvedSlots.Count} CardSlot override reference(s) for battle resolution.");
+            }
+        }
+        else
+        {
+            CardSlot[] discoveredSlots = FindObjectsOfType<CardSlot>(true);
+            if (discoveredSlots != null && discoveredSlots.Length > 0)
+            {
+                for (int i = 0; i < discoveredSlots.Length; i++)
+                {
+                    TryAddSlot(discoveredSlots[i]);
+                }
+
+                if (resolvedSlots.Count > 0)
+                {
+                    LogDebug($"Found {resolvedSlots.Count} CardSlot component(s) via global search fallback.");
+                }
+            }
+        }
+
+        if (resolvedSlots.Count == 0)
+        {
+            LogWarning("No CardSlot components found under BattleResolver and no slot overrides provided. Ensure slots are parented correctly or assign overrides.");
             return;
         }
 
-        LogDebug($"Found {slots.Length} CardSlot component(s) to inspect.");
-
-        for (int i = 0; i < slots.Length; i++)
+        for (int i = 0; i < resolvedSlots.Count; i++)
         {
-            CardSlot slot = slots[i];
+            CardSlot slot = resolvedSlots[i];
             if (slot == null)
             {
                 LogWarning($"Encountered null CardSlot reference at index {i}. Skipping.");
