@@ -22,6 +22,8 @@ public class CardView : MonoBehaviour
 
     private RectTransform _rectTransform;
     private CharacterCardDefinition _definition;
+    private CharacterStats _baseStats;
+    private bool _baseStatsCached;
 
     public CharacterCardDefinition Definition => _definition;
 
@@ -43,6 +45,7 @@ public class CardView : MonoBehaviour
         _rectTransform = GetComponent<RectTransform>();
         EnsureTextReferences();
         EnsureImageReference();
+        CacheBaseStats();
         if (_definition != null)
         {
             ApplyDefinition();
@@ -60,6 +63,8 @@ public class CardView : MonoBehaviour
         _rectTransform = GetComponent<RectTransform>();
         EnsureTextReferences();
         EnsureImageReference();
+        _baseStats = null;
+        _baseStatsCached = false;
         UpdatePortraitSprite();
         UpdateStatsText();
     }
@@ -87,6 +92,9 @@ public class CardView : MonoBehaviour
     public void SetData(CharacterCardDefinition definition)
     {
         _definition = definition;
+        _baseStats = null;
+        _baseStatsCached = false;
+        CacheBaseStats();
         ApplyDefinition();
 
         if (_definition != null && !string.IsNullOrEmpty(_definition.id))
@@ -99,6 +107,7 @@ public class CardView : MonoBehaviour
     {
         EnsureTextReferences();
         EnsureImageReference();
+        CacheBaseStats();
 
         if (nameText != null)
         {
@@ -425,6 +434,104 @@ public class CardView : MonoBehaviour
         return target.GetComponentInChildren<Image>(true);
     }
 
+    private void CacheBaseStats()
+    {
+        if (_baseStatsCached)
+        {
+            Debug.Log($"{GetDebugContext()} CacheBaseStats skipped; already cached values {FormatStats(_baseStats)}.", this);
+            return;
+        }
+
+        if (_definition != null && _definition.stats != null)
+        {
+            _baseStats = new CharacterStats(_definition.stats);
+            _baseStatsCached = true;
+            Debug.Log($"{GetDebugContext()} CacheBaseStats captured stats {FormatStats(_baseStats)}.", this);
+        }
+        else
+        {
+            Debug.LogWarning($"{GetDebugContext()} CacheBaseStats could not cache values because definition or stats are missing.", this);
+        }
+    }
+
+    public CharacterStats GetBaseStatsClone()
+    {
+        if (!_baseStatsCached)
+        {
+            CacheBaseStats();
+        }
+
+        return _baseStats != null ? new CharacterStats(_baseStats) : null;
+    }
+
+    public void ResetToBaseStats()
+    {
+        if (_definition == null)
+        {
+            Debug.LogWarning($"{GetDebugContext()} ResetToBaseStats called but definition is null.", this);
+            return;
+        }
+
+        if (!_baseStatsCached)
+        {
+            CacheBaseStats();
+        }
+
+        if (_baseStats != null)
+        {
+            _definition.stats = new CharacterStats(_baseStats);
+        }
+        else if (_definition.stats != null)
+        {
+            _definition.stats = new CharacterStats(_definition.stats);
+        }
+
+        UpdateStatsText();
+
+        Debug.Log($"{GetDebugContext()} ResetToBaseStats applied. Cached base: {FormatStats(_baseStats)} | Definition stats: {FormatStats(_definition.stats)}.", this);
+    }
+
+    public void ApplyStats(CharacterStats stats, bool updateBase = false)
+    {
+        if (_definition == null)
+        {
+            Debug.LogWarning($"{GetDebugContext()} ApplyStats called but definition is null.", this);
+            return;
+        }
+
+        if (stats != null)
+        {
+            _definition.stats = new CharacterStats(stats);
+            if (updateBase)
+            {
+                _baseStats = new CharacterStats(stats);
+                _baseStatsCached = true;
+            }
+
+            Debug.Log($"{GetDebugContext()} ApplyStats received values {FormatStats(stats)} (updateBase={updateBase}).", this);
+        }
+        else
+        {
+            _definition.stats = null;
+            if (updateBase)
+            {
+                _baseStats = null;
+                _baseStatsCached = true;
+            }
+
+            Debug.LogWarning($"{GetDebugContext()} ApplyStats received null stats (updateBase={updateBase}).", this);
+        }
+
+        UpdateStatsText();
+
+        Debug.Log($"{GetDebugContext()} ApplyStats completed. Base cache: {FormatStats(_baseStats)} | Definition stats: {FormatStats(_definition.stats)}.", this);
+    }
+
+    public void RefreshStatsDisplay()
+    {
+        UpdateStatsText();
+    }
+
     private string GetDebugContext()
     {
         string cardName = gameObject != null && !string.IsNullOrEmpty(gameObject.name)
@@ -432,5 +539,15 @@ public class CardView : MonoBehaviour
             : "<unnamed>";
 
         return $"[CardView:{cardName}]";
+    }
+
+    private string FormatStats(CharacterStats stats)
+    {
+        if (stats == null)
+        {
+            return "<null>";
+        }
+
+        return $"ATK:{stats.attack} HP:{stats.health} ARM:{stats.armor} EXTRA:{stats.extraAttack} AOE:{stats.areaDamage} REG:{stats.regeneration} LUCK:{stats.luck} SCORE:{stats.score}";
     }
 }
