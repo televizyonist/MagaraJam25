@@ -22,4 +22,9 @@ public static class MonsterWar
 
         yield return routine;
     }
+
+    public static void LoadGameFromSave()
+    {
+        Debug.LogWarning($"{LogPrefix} LoadGameFromSave was invoked but no save system is currently available.");
+    }
 }
