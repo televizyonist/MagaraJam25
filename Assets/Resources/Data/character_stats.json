@@ -2,7 +2,7 @@
   "P01": {
     "Can": 1,
     "Hasar": 2,
-    "Kalkan": 1,
+    "Kalkan": 0,
     "Ekstra Atak": 1,
     "Alan Hasarı": 1,
     "Lootlama": 1,
@@ -12,7 +12,7 @@
   "P02": {
     "Can": 2,
     "Hasar": 1,
-    "Kalkan": 1,
+    "Kalkan": 0,
     "Ekstra Atak": 1,
     "Alan Hasarı": 1,
     "Lootlama": 1,
@@ -22,7 +22,7 @@
   "P03": {
     "Can": 1,
     "Hasar": 2,
-    "Kalkan": 1,
+    "Kalkan": 0,
     "Ekstra Atak": 1,
     "Alan Hasarı": 1,
     "Lootlama": 1,
@@ -32,7 +32,7 @@
   "P04": {
     "Can": 2,
     "Hasar": 1,
-    "Kalkan": 1,
+    "Kalkan": 0,
     "Ekstra Atak": 1,
     "Alan Hasarı": 1,
     "Lootlama": 1,
@@ -42,7 +42,7 @@
   "P05": {
     "Can": 2,
     "Hasar": 1,
-    "Kalkan": 1,
+    "Kalkan": 0,
     "Ekstra Atak": 2,
     "Alan Hasarı": 1,
     "Lootlama": 1,
@@ -52,7 +52,7 @@
   "P06": {
     "Can": 1,
     "Hasar": 2,
-    "Kalkan": 1,
+    "Kalkan": 0,
     "Ekstra Atak": 2,
     "Alan Hasarı": 1,
     "Lootlama": 1,
@@ -62,7 +62,7 @@
   "P07": {
     "Can": 1,
     "Hasar": 2,
-    "Kalkan": 1,
+    "Kalkan": 0,
     "Ekstra Atak": 1,
     "Alan Hasarı": 1,
     "Lootlama": 1,
@@ -72,7 +72,7 @@
   "P08": {
     "Can": 2,
     "Hasar": 1,
-    "Kalkan": 1,
+    "Kalkan": 0,
     "Ekstra Atak": 1,
     "Alan Hasarı": 1,
     "Lootlama": 1,
@@ -82,7 +82,7 @@
   "P09": {
     "Can": 1,
     "Hasar": 2,
-    "Kalkan": 1,
+    "Kalkan": 0,
     "Ekstra Atak": 1,
     "Alan Hasarı": 1,
     "Lootlama": 1,
@@ -92,7 +92,7 @@
   "P10": {
     "Can": 2,
     "Hasar": 1,
-    "Kalkan": 1,
+    "Kalkan": 0,
     "Ekstra Atak": 1,
     "Alan Hasarı": 1,
     "Lootlama": 1,
@@ -102,7 +102,7 @@
   "P11": {
     "Can": 1,
     "Hasar": 2,
-    "Kalkan": 1,
+    "Kalkan": 0,
     "Ekstra Atak": 2,
     "Alan Hasarı": 1,
     "Lootlama": 1,
@@ -112,7 +112,7 @@
   "P12": {
     "Can": 2,
     "Hasar": 1,
-    "Kalkan": 1,
+    "Kalkan": 0,
     "Ekstra Atak": 1,
     "Alan Hasarı": 1,
     "Lootlama": 1,
@@ -122,7 +122,7 @@
   "P13": {
     "Can": 1,
     "Hasar": 2,
-    "Kalkan": 1,
+    "Kalkan": 0,
     "Ekstra Atak": 1,
     "Alan Hasarı": 1,
     "Lootlama": 1,
@@ -132,7 +132,7 @@
   "P14": {
     "Can": 2,
     "Hasar": 1,
-    "Kalkan": 1,
+    "Kalkan": 0,
     "Ekstra Atak": 1,
     "Alan Hasarı": 1,
     "Lootlama": 1,
@@ -142,7 +142,7 @@
   "P15": {
     "Can": 1,
     "Hasar": 2,
-    "Kalkan": 1,
+    "Kalkan": 0,
     "Ekstra Atak": 2,
     "Alan Hasarı": 1,
     "Lootlama": 1,
@@ -152,7 +152,7 @@
   "P16": {
     "Can": 2,
     "Hasar": 1,
-    "Kalkan": 1,
+    "Kalkan": 0,
     "Ekstra Atak": 2,
     "Alan Hasarı": 1,
     "Lootlama": 1,
@@ -162,7 +162,7 @@
   "P17": {
     "Can": 2,
     "Hasar": 1,
-    "Kalkan": 1,
+    "Kalkan": 0,
     "Ekstra Atak": 1,
     "Alan Hasarı": 1,
     "Lootlama": 1,
@@ -172,7 +172,7 @@
   "P18": {
     "Can": 1,
     "Hasar": 2,
-    "Kalkan": 1,
+    "Kalkan": 0,
     "Ekstra Atak": 1,
     "Alan Hasarı": 1,
     "Lootlama": 1,
@@ -182,7 +182,7 @@
   "P19": {
     "Can": 1,
     "Hasar": 2,
-    "Kalkan": 1,
+    "Kalkan": 0,
     "Ekstra Atak": 1,
     "Alan Hasarı": 1,
     "Lootlama": 1,
@@ -192,7 +192,7 @@
   "P20": {
     "Can": 1,
     "Hasar": 2,
-    "Kalkan": 1,
+    "Kalkan": 0,
     "Ekstra Atak": 2,
     "Alan Hasarı": 1,
     "Lootlama": 1,
