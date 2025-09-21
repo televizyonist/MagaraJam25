@@ -18,6 +18,7 @@ public class BattleResolver : MonoBehaviour
     };
 
     [SerializeField] private bool enableDebugLogging = true;
+    [SerializeField] private List<CardSlot> slotOverrides = new List<CardSlot>();
 
     private const string LogPrefix = "[BattleResolver]";
 
@@ -109,18 +110,43 @@ public class BattleResolver : MonoBehaviour
     {
         _slotStates.Clear();
 
+        List<CardSlot> resolvedSlots = new List<CardSlot>();
+
         CardSlot[] slots = GetComponentsInChildren<CardSlot>(true);
-        if (slots == null || slots.Length == 0)
+        if (slots != null && slots.Length > 0)
         {
-            LogWarning("No CardSlot components found under BattleResolver. Ensure slots are parented correctly.");
+            resolvedSlots.AddRange(slots);
+            LogDebug($"Found {resolvedSlots.Count} CardSlot component(s) to inspect.");
+        }
+        else if (slotOverrides != null && slotOverrides.Count > 0)
+        {
+            for (int i = 0; i < slotOverrides.Count; i++)
+            {
+                CardSlot overrideSlot = slotOverrides[i];
+                if (overrideSlot == null)
+                {
+                    LogWarning($"Slot override at index {i} is null. Skipping.");
+                    continue;
+                }
+
+                resolvedSlots.Add(overrideSlot);
+            }
+
+            if (resolvedSlots.Count > 0)
+            {
+                LogDebug($"Using {resolvedSlots.Count} CardSlot override reference(s) for battle resolution.");
+            }
+        }
+
+        if (resolvedSlots.Count == 0)
+        {
+            LogWarning("No CardSlot components found under BattleResolver and no slot overrides provided. Ensure slots are parented correctly or assign overrides.");
             return;
         }
 
-        LogDebug($"Found {slots.Length} CardSlot component(s) to inspect.");
-
-        for (int i = 0; i < slots.Length; i++)
+        for (int i = 0; i < resolvedSlots.Count; i++)
         {
-            CardSlot slot = slots[i];
+            CardSlot slot = resolvedSlots[i];
             if (slot == null)
             {
                 LogWarning($"Encountered null CardSlot reference at index {i}. Skipping.");
