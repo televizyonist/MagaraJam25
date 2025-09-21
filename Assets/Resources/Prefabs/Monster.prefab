@@ -608,6 +608,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 5291616826415902347}
+  - component: {fileID: 3307130535967812345}
   m_Layer: 0
   m_Name: Monster
   m_TagString: Untagged
@@ -631,3 +632,21 @@ Transform:
   - {fileID: 1124739590713166972}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &3307130535967812345
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7290527602225548259}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 89faa1764ec5412ebab16009342f30b4, type: 3}
+  m_Name:
+  m_EditorClassIdentifier:
+  monsterId: Monster_01
+  monstersResourcePath: Data/monsters
+  spriteResourceFolder:
+  portraitImage: {fileID: 7708072685995986667}
+  healthValueText: {fileID: 6546815937503847460}
+  attackValueText: {fileID: 2166686395519082865}
