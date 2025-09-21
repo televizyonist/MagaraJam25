@@ -1,3 +1,4 @@
+using System;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -126,29 +127,71 @@ public class CardView : MonoBehaviour
             return;
         }
 
-        Sprite sprite = null;
-
         string spriteName = ResolveSpriteName();
-
-        if (!string.IsNullOrEmpty(spriteName))
-        {
-            string folder = string.IsNullOrEmpty(characterSpriteResourceFolder)
-                ? string.Empty
-                : characterSpriteResourceFolder.Trim();
-
-            string resourcePath = string.IsNullOrEmpty(folder)
-                ? spriteName
-                : $"{folder}/{spriteName}";
-
-            sprite = Resources.Load<Sprite>(resourcePath);
-        }
+        Sprite sprite = LoadPortraitSprite(spriteName);
 
         portraitImage.sprite = sprite;
         portraitImage.enabled = sprite != null;
     }
 
+    private Sprite LoadPortraitSprite(string spriteName)
+    {
+        if (string.IsNullOrWhiteSpace(spriteName))
+        {
+            return null;
+        }
+
+        spriteName = spriteName.Trim();
+
+        string folder = string.IsNullOrWhiteSpace(characterSpriteResourceFolder)
+            ? "Characters"
+            : characterSpriteResourceFolder.Trim();
+
+        Sprite sprite = null;
+
+        string resourcePath = string.IsNullOrEmpty(folder)
+            ? spriteName
+            : $"{folder}/{spriteName}";
+
+        sprite = Resources.Load<Sprite>(resourcePath);
+
+        if (sprite != null)
+        {
+            return sprite;
+        }
+
+        if (!string.IsNullOrEmpty(folder))
+        {
+            Sprite[] candidates = Resources.LoadAll<Sprite>(folder);
+            if (candidates != null)
+            {
+                for (int i = 0; i < candidates.Length; i++)
+                {
+                    Sprite candidate = candidates[i];
+                    if (candidate == null)
+                    {
+                        continue;
+                    }
+
+                    if (string.Equals(candidate.name, spriteName, StringComparison.OrdinalIgnoreCase))
+                    {
+                        sprite = candidate;
+                        break;
+                    }
+                }
+            }
+        }
+
+        return sprite;
+    }
+
     private string ResolveSpriteName()
     {
+        if (nameText != null && !string.IsNullOrEmpty(nameText.text))
+        {
+            return nameText.text.Trim();
+        }
+
         if (_definition != null)
         {
             if (!string.IsNullOrEmpty(_definition.name))
@@ -160,11 +203,6 @@ public class CardView : MonoBehaviour
             {
                 return _definition.id.Trim();
             }
-        }
-
-        if (nameText != null && !string.IsNullOrEmpty(nameText.text))
-        {
-            return nameText.text.Trim();
         }
 
         if (!string.IsNullOrEmpty(gameObject.name))
