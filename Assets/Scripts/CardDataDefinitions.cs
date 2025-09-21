@@ -63,6 +63,18 @@ public class CharacterRelationshipDatabase
 [Serializable]
 public class CharacterStats
 {
+    public enum StatType
+    {
+        Attack,
+        Health,
+        Armor,
+        ExtraAttack,
+        AreaDamage,
+        Regeneration,
+        Luck,
+        Score
+    }
+
     public int attack;
     public int health;
     public int armor;
@@ -96,6 +108,77 @@ public class CharacterStats
         luck = other.luck;
         score = other.score;
         _hasValues = other._hasValues;
+    }
+
+    public int GetValue(StatType statType)
+    {
+        switch (statType)
+        {
+            case StatType.Attack:
+                return attack;
+            case StatType.Health:
+                return health;
+            case StatType.Armor:
+                return armor;
+            case StatType.ExtraAttack:
+                return extraAttack;
+            case StatType.AreaDamage:
+                return areaDamage;
+            case StatType.Regeneration:
+                return regeneration;
+            case StatType.Luck:
+                return luck;
+            case StatType.Score:
+                return score;
+            default:
+                return 0;
+        }
+    }
+
+    public void SetValue(StatType statType, int value)
+    {
+        switch (statType)
+        {
+            case StatType.Attack:
+                attack = value;
+                break;
+            case StatType.Health:
+                health = value;
+                break;
+            case StatType.Armor:
+                armor = value;
+                break;
+            case StatType.ExtraAttack:
+                extraAttack = value;
+                break;
+            case StatType.AreaDamage:
+                areaDamage = value;
+                break;
+            case StatType.Regeneration:
+                regeneration = value;
+                break;
+            case StatType.Luck:
+                luck = value;
+                break;
+            case StatType.Score:
+                score = value;
+                break;
+            default:
+                return;
+        }
+
+        _hasValues = true;
+    }
+
+    public void AddToStat(StatType statType, int amount)
+    {
+        if (amount == 0)
+        {
+            return;
+        }
+
+        int newValue = GetValue(statType) + amount;
+        SetValue(statType, newValue);
     }
 
     public void AssignValue(string key, int value)
