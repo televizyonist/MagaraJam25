@@ -120,6 +120,12 @@ public class CardStatVisibilityController : MonoBehaviour
         ApplyContext(context);
     }
 
+    public void ForceHandDisplay()
+    {
+        EnsureReferences();
+        ApplyContext(CardContext.Hand);
+    }
+
     private CardSlot GetActiveSlot()
     {
         if (_dragHandler != null && _dragHandler.CurrentSlot != null)
