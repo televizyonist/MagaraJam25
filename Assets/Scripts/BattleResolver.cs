@@ -229,10 +229,8 @@ public class BattleResolver : MonoBehaviour
         return mainCamera != null ? mainCamera.transform : null;
     }
 
-    private void BuildSlotStates()
+    private List<CardSlot> ResolveCardSlots()
     {
-        _slotStates.Clear();
-
         List<CardSlot> resolvedSlots = new List<CardSlot>();
         HashSet<CardSlot> uniqueSlots = new HashSet<CardSlot>();
 
@@ -273,7 +271,7 @@ public class BattleResolver : MonoBehaviour
 
             if (resolvedSlots.Count > 0)
             {
-                LogDebug($"Found {resolvedSlots.Count} CardSlot component(s) to inspect.");
+                LogDebug($"Found {resolvedSlots.Count} CardSlot component(s) via hierarchy search.");
             }
         }
         else if (slotOverrides != null && slotOverrides.Count > 0)
@@ -285,7 +283,7 @@ public class BattleResolver : MonoBehaviour
 
             if (resolvedSlots.Count > 0)
             {
-                LogDebug($"Using {resolvedSlots.Count} CardSlot override reference(s) for battle resolution.");
+                LogDebug($"Using {resolvedSlots.Count} CardSlot override reference(s).");
             }
         }
         else
@@ -305,6 +303,14 @@ public class BattleResolver : MonoBehaviour
             }
         }
 
+        return resolvedSlots;
+    }
+
+    private void BuildSlotStates()
+    {
+        _slotStates.Clear();
+
+        List<CardSlot> resolvedSlots = ResolveCardSlots();
         if (resolvedSlots.Count == 0)
         {
             LogWarning("No CardSlot components found under BattleResolver and no slot overrides provided. Ensure slots are parented correctly or assign overrides.");
@@ -537,13 +543,13 @@ public class BattleResolver : MonoBehaviour
 
     private void HideSlotDecorationsAndCards()
     {
-        CardSlot[] slots = GetComponentsInChildren<CardSlot>(true);
-        if (slots == null || slots.Length == 0)
+        List<CardSlot> slots = ResolveCardSlots();
+        if (slots.Count == 0)
         {
             return;
         }
 
-        for (int i = 0; i < slots.Length; i++)
+        for (int i = 0; i < slots.Count; i++)
         {
             CardSlot slot = slots[i];
             if (slot == null)
