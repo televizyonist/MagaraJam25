@@ -24,6 +24,9 @@ public class BattleResolver : MonoBehaviour
     [SerializeField] private GameObject battleButtonRoot;
     [SerializeField] private GameObject handAreaRoot;
 
+    [Header("Battle Presentation")]
+    [SerializeField] private SlotRelationshipDisplay relationshipDisplayOverride;
+
     [Header("Camera Sequence")]
     [SerializeField] private Transform cameraTransformOverride;
     [SerializeField] private Transform secondCameraPosition;
@@ -33,8 +36,10 @@ public class BattleResolver : MonoBehaviour
     [SerializeField] private float thirdCameraMoveSpeed = 5f;
 
     private Coroutine _cameraSequenceRoutine;
+    private bool _hasAppliedThirdCameraFocus;
 
     private const string LogPrefix = "[BattleResolver]";
+    private const int FocusSlotMinimumIndex = 4;
 
     private readonly List<SlotBattleState> _slotStates = new List<SlotBattleState>();
 
@@ -184,6 +189,8 @@ public class BattleResolver : MonoBehaviour
             {
                 yield return new WaitForSeconds(delayBeforeThirdCameraMove);
             }
+
+            ApplyThirdCameraFocus();
 
             yield return MoveTransform(cameraTransform, thirdCameraPosition.position, thirdCameraMoveSpeed);
         }
@@ -476,6 +483,153 @@ public class BattleResolver : MonoBehaviour
 
         string suffix = slotName.Substring(prefix.Length).Trim();
         return int.TryParse(suffix, out index);
+    }
+
+    private void ApplyThirdCameraFocus()
+    {
+        if (_hasAppliedThirdCameraFocus)
+        {
+            return;
+        }
+
+        _hasAppliedThirdCameraFocus = true;
+
+        HideRelationshipDisplays();
+        HideSlotDecorationsAndCards();
+    }
+
+    private void HideRelationshipDisplays()
+    {
+        SlotRelationshipDisplay[] displays = null;
+        if (relationshipDisplayOverride != null)
+        {
+            displays = new[] { relationshipDisplayOverride };
+        }
+        else
+        {
+            displays = GetComponentsInChildren<SlotRelationshipDisplay>(true);
+            if ((displays == null || displays.Length == 0))
+            {
+                SlotRelationshipDisplay fallback = FindObjectOfType<SlotRelationshipDisplay>(true);
+                if (fallback != null)
+                {
+                    displays = new[] { fallback };
+                }
+            }
+        }
+
+        if (displays == null)
+        {
+            return;
+        }
+
+        for (int i = 0; i < displays.Length; i++)
+        {
+            SlotRelationshipDisplay display = displays[i];
+            if (display == null)
+            {
+                continue;
+            }
+
+            display.SetForceHidden(true);
+        }
+    }
+
+    private void HideSlotDecorationsAndCards()
+    {
+        CardSlot[] slots = GetComponentsInChildren<CardSlot>(true);
+        if (slots == null || slots.Length == 0)
+        {
+            return;
+        }
+
+        for (int i = 0; i < slots.Length; i++)
+        {
+            CardSlot slot = slots[i];
+            if (slot == null)
+            {
+                continue;
+            }
+
+            Transform slotTransform = slot.transform;
+            SetImmediateChildActive(slotTransform, "Glow", false);
+            SetImmediateChildActive(slotTransform, "Border", false);
+
+            if (!TryParseSlotIndex(slot.gameObject.name, out int slotIndex))
+            {
+                continue;
+            }
+
+            if (slotIndex >= FocusSlotMinimumIndex)
+            {
+                continue;
+            }
+
+            HideCardsUnderSlot(slot);
+        }
+    }
+
+    private void HideCardsUnderSlot(CardSlot slot)
+    {
+        if (slot == null)
+        {
+            return;
+        }
+
+        Transform parent = slot.GetCardParent();
+        if (parent == null)
+        {
+            return;
+        }
+
+        CardDragHandler[] handlers = parent.GetComponentsInChildren<CardDragHandler>(true);
+        if (handlers == null || handlers.Length == 0)
+        {
+            return;
+        }
+
+        for (int i = 0; i < handlers.Length; i++)
+        {
+            CardDragHandler handler = handlers[i];
+            if (handler == null)
+            {
+                continue;
+            }
+
+            GameObject cardObject = handler.gameObject;
+            if (cardObject != null && cardObject.activeSelf)
+            {
+                cardObject.SetActive(false);
+            }
+        }
+    }
+
+    private static void SetImmediateChildActive(Transform parent, string childName, bool isActive)
+    {
+        if (parent == null || string.IsNullOrEmpty(childName))
+        {
+            return;
+        }
+
+        for (int i = 0; i < parent.childCount; i++)
+        {
+            Transform child = parent.GetChild(i);
+            if (child == null)
+            {
+                continue;
+            }
+
+            if (!string.Equals(child.name, childName, StringComparison.OrdinalIgnoreCase))
+            {
+                continue;
+            }
+
+            GameObject childObject = child.gameObject;
+            if (childObject != null && childObject.activeSelf != isActive)
+            {
+                childObject.SetActive(isActive);
+            }
+        }
     }
 
     private void LogDebug(string message, UnityEngine.Object context = null)
