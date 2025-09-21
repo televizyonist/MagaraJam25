@@ -18,6 +18,34 @@ public class MonsterView : MonoBehaviour
 
     private static readonly Dictionary<string, Dictionary<string, MonsterStats>> Cache = new Dictionary<string, Dictionary<string, MonsterStats>>(StringComparer.OrdinalIgnoreCase);
 
+    public string MonsterId => monsterId;
+
+    public void SetMonsterId(string id, bool applyImmediately = true)
+    {
+        string normalizedId = id ?? string.Empty;
+        if (string.Equals(monsterId, normalizedId, StringComparison.Ordinal))
+        {
+            if (applyImmediately)
+            {
+                ApplyMonsterData();
+            }
+
+            return;
+        }
+
+        monsterId = normalizedId;
+
+        if (applyImmediately)
+        {
+            ApplyMonsterData();
+        }
+    }
+
+    public void RefreshView()
+    {
+        ApplyMonsterData();
+    }
+
     private void Awake()
     {
         EnsureReferences();
