@@ -164,12 +164,20 @@ public class SlotRelationshipDisplay : MonoBehaviour
             return false;
         }
 
+        string previousRelationship = connection.RelationshipText;
+        if (string.IsNullOrWhiteSpace(previousRelationship))
+        {
+            previousRelationship = connection.LastText;
+        }
+
         CharacterCardDefinition fromDefinition = GetCardDefinition(connection.FromSlot);
         CharacterCardDefinition toDefinition = GetCardDefinition(connection.ToSlot);
         string slotRelation = string.Empty;
         if (fromDefinition != null && toDefinition != null)
         {
-            slotRelation = ResolveRelationship(fromDefinition, toDefinition);
+            string relationFromTo = GetDirectRelationship(fromDefinition, toDefinition);
+            string relationToFrom = GetDirectRelationship(toDefinition, fromDefinition);
+            slotRelation = SelectPreferredRelationshipText(relationFromTo, relationToFrom, previousRelationship);
         }
 
         CharacterCardDefinition activeDefinition = _hoveredCardDefinition ?? _draggedCardDefinition;
@@ -493,16 +501,54 @@ public class SlotRelationshipDisplay : MonoBehaviour
             return string.Empty;
         }
 
+        string directRelationship = GetDirectRelationship(from, to);
+        if (!string.IsNullOrWhiteSpace(directRelationship))
+        {
+            return directRelationship;
+        }
+
+        return GetDirectRelationship(to, from);
+    }
+
+    private string GetDirectRelationship(CharacterCardDefinition from, CharacterCardDefinition to)
+    {
+        if (from == null || to == null)
+        {
+            return string.Empty;
+        }
+
         RelationshipInfo relationship = from.GetRelationshipById(to.id);
         if (relationship != null && !string.IsNullOrWhiteSpace(relationship.relation))
         {
             return relationship.relation;
         }
 
-        relationship = to.GetRelationshipById(from.id);
-        if (relationship != null && !string.IsNullOrWhiteSpace(relationship.relation))
+        return string.Empty;
+    }
+
+    private string SelectPreferredRelationshipText(string relationFromTo, string relationToFrom, string previousRelationship)
+    {
+        if (!string.IsNullOrWhiteSpace(previousRelationship))
         {
-            return relationship.relation;
+            if (!string.IsNullOrWhiteSpace(relationFromTo) && string.Equals(previousRelationship, relationFromTo, StringComparison.Ordinal))
+            {
+                return relationFromTo;
+            }
+
+            if (!string.IsNullOrWhiteSpace(relationToFrom) && string.Equals(previousRelationship, relationToFrom, StringComparison.Ordinal))
+            {
+                return relationToFrom;
+            }
+        }
+
+        if (!string.IsNullOrWhiteSpace(relationFromTo))
+        {
+            return relationFromTo;
+        }
+
+        if (!string.IsNullOrWhiteSpace(relationToFrom))
+        {
+            return relationToFrom;
         }
 
         return string.Empty;
