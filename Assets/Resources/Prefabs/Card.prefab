@@ -493,6 +493,7 @@ GameObject:
   m_Component:
   - component: {fileID: 5735851196013634290}
   - component: {fileID: 3547998242888599151}
+  - component: {fileID: 3817404077664161191}
   m_Layer: 5
   m_Name: Card
   m_TagString: Untagged
@@ -530,10 +531,27 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: d63796b76e7e422b97482d3afe76ff00, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
+  m_Name:
+  m_EditorClassIdentifier:
   dragCanvas: {fileID: 0}
   returnToOriginalSlotIfRejected: 1
+--- !u!114 &3817404077664161191
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1244029720336922669}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1beb179a82b34c45bf32e5b36d702938, type: 3}
+  m_Name:
+  m_EditorClassIdentifier:
+  extraAttackRoot: {fileID: 6063957785860938069}
+  aoeRoot: {fileID: 4693165459085731199}
+  regenerationRoot: {fileID: 146044909934213915}
+  luckRoot: {fileID: 3079895993757005902}
+  scoreRoot: {fileID: 8890993833797184897}
 --- !u!1 &3079895993757005902
 GameObject:
   m_ObjectHideFlags: 0
