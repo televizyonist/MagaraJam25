@@ -1,0 +1,27 @@
+{
+  "Monster_01": {
+    "Can": 7,
+    "Saldiri": 4,
+    "Deger": 5
+  },
+  "Monster_02": {
+    "Can": 3,
+    "Saldiri": 9,
+    "Deger": 6
+  },
+  "Monster_03": {
+    "Can": 10,
+    "Saldiri": 2,
+    "Deger": 6
+  },
+  "Monster_04": {
+    "Can": 5,
+    "Saldiri": 6,
+    "Deger": 5
+  },
+  "Monster_05": {
+    "Can": 8,
+    "Saldiri": 7,
+    "Deger": 7
+  }
+}
