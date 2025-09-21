@@ -1,11 +1,14 @@
 using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
 
 [DisallowMultipleComponent]
 public class CardView : MonoBehaviour
 {
     [SerializeField] private TMP_Text nameText;
     [SerializeField] private TMP_Text familyText;
+    [SerializeField] private Image portraitImage;
+    [SerializeField] private string characterSpriteResourceFolder = "Characters";
 
     private RectTransform _rectTransform;
     private CharacterCardDefinition _definition;
@@ -29,6 +32,7 @@ public class CardView : MonoBehaviour
     {
         _rectTransform = GetComponent<RectTransform>();
         EnsureTextReferences();
+        EnsureImageReference();
         if (_definition != null)
         {
             ApplyDefinition();
@@ -39,6 +43,7 @@ public class CardView : MonoBehaviour
     {
         _rectTransform = GetComponent<RectTransform>();
         EnsureTextReferences();
+        EnsureImageReference();
     }
 
     private void OnValidate()
@@ -47,6 +52,7 @@ public class CardView : MonoBehaviour
         {
             _rectTransform = GetComponent<RectTransform>();
             EnsureTextReferences();
+            EnsureImageReference();
             if (_definition != null)
             {
                 ApplyDefinition();
@@ -68,6 +74,7 @@ public class CardView : MonoBehaviour
     private void ApplyDefinition()
     {
         EnsureTextReferences();
+        EnsureImageReference();
 
         if (nameText != null)
         {
@@ -78,6 +85,8 @@ public class CardView : MonoBehaviour
         {
             familyText.text = _definition != null ? _definition.GetFamilyDisplayName() : string.Empty;
         }
+
+        UpdatePortraitSprite();
     }
 
     private void EnsureTextReferences()
@@ -93,6 +102,41 @@ public class CardView : MonoBehaviour
         }
     }
 
+    private void EnsureImageReference()
+    {
+        if (portraitImage == null)
+        {
+            portraitImage = FindImageUnder("Image");
+        }
+    }
+
+    private void UpdatePortraitSprite()
+    {
+        if (portraitImage == null)
+        {
+            return;
+        }
+
+        Sprite sprite = null;
+
+        if (_definition != null)
+        {
+            string spriteName = !string.IsNullOrEmpty(_definition.name) ? _definition.name : _definition.id;
+
+            if (!string.IsNullOrEmpty(spriteName))
+            {
+                string resourcePath = string.IsNullOrEmpty(characterSpriteResourceFolder)
+                    ? spriteName
+                    : $"{characterSpriteResourceFolder}/{spriteName}";
+
+                sprite = Resources.Load<Sprite>(resourcePath);
+            }
+        }
+
+        portraitImage.sprite = sprite;
+        portraitImage.enabled = sprite != null;
+    }
+
     private TMP_Text FindTextUnder(string path)
     {
         Transform target = transform.Find(path);
@@ -102,5 +146,16 @@ public class CardView : MonoBehaviour
         }
 
         return target.GetComponentInChildren<TMP_Text>(true);
+    }
+
+    private Image FindImageUnder(string path)
+    {
+        Transform target = transform.Find(path);
+        if (target == null)
+        {
+            return null;
+        }
+
+        return target.GetComponentInChildren<Image>(true);
     }
 }
