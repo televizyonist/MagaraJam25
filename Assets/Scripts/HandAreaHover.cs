@@ -15,6 +15,9 @@ public class HandAreaHover : MonoBehaviour, IPointerEnterHandler, IPointerExitHa
     [Tooltip("Resource path used to load the relationship data json.")]
     public string relationshipsResourcePath = "Data/relationships";
 
+    [Tooltip("Resource path used to load the character stats data json.")]
+    public string characterStatsResourcePath = "Data/character_stats";
+
     [Tooltip("Amount of cards that will be dealt to the player's hand when the game starts.")]
     public int startingHandSize = 10;
 
@@ -299,9 +302,79 @@ public class HandAreaHover : MonoBehaviour, IPointerEnterHandler, IPointerExitHa
             Debug.LogError($"Failed to parse relationships data: {ex.Message}");
         }
 
+        ApplyCharacterStats();
+
         if (_cardDefinitions.Count > 1)
         {
             Shuffle(_cardDefinitions);
+        }
+    }
+
+    private void ApplyCharacterStats()
+    {
+        if (_cardDefinitions.Count == 0)
+        {
+            return;
+        }
+
+        Dictionary<string, CharacterStats> statsLookup = LoadCharacterStats();
+        if (statsLookup.Count == 0)
+        {
+            for (int i = 0; i < _cardDefinitions.Count; i++)
+            {
+                if (_cardDefinitions[i] != null)
+                {
+                    _cardDefinitions[i].stats = null;
+                }
+            }
+
+            return;
+        }
+
+        for (int i = 0; i < _cardDefinitions.Count; i++)
+        {
+            CharacterCardDefinition definition = _cardDefinitions[i];
+            if (definition == null || string.IsNullOrEmpty(definition.id))
+            {
+                continue;
+            }
+
+            if (statsLookup.TryGetValue(definition.id, out CharacterStats stats))
+            {
+                definition.stats = new CharacterStats(stats);
+            }
+            else
+            {
+                definition.stats = null;
+            }
+        }
+    }
+
+    private Dictionary<string, CharacterStats> LoadCharacterStats()
+    {
+        var lookup = new Dictionary<string, CharacterStats>(StringComparer.OrdinalIgnoreCase);
+
+        if (string.IsNullOrWhiteSpace(characterStatsResourcePath))
+        {
+            Debug.LogWarning("Character stats resource path is empty.");
+            return lookup;
+        }
+
+        TextAsset statsAsset = Resources.Load<TextAsset>(characterStatsResourcePath);
+        if (statsAsset == null)
+        {
+            Debug.LogWarning($"Character stats data could not be loaded from Resources/{characterStatsResourcePath}.");
+            return lookup;
+        }
+
+        try
+        {
+            return CharacterStatsParser.Parse(statsAsset.text);
+        }
+        catch (Exception ex)
+        {
+            Debug.LogError($"Failed to parse character stats data: {ex.Message}");
+            return lookup;
         }
     }
 
