@@ -1672,6 +1672,7 @@ MonoBehaviour:
   slotOverrides: []
   battleButtonRoot: {fileID: 1694427139}
   handAreaRoot: {fileID: 371499493}
+  relationshipDisplayOverride: {fileID: 0}
   cameraTransformOverride: {fileID: 519420032}
   secondCameraPosition: {fileID: 1220085558}
   secondCameraMoveSpeed: 10
@@ -1688,8 +1689,8 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: d4aa2dfb10bd4834a5f24f195ef5aad5, type: 3}
-  m_Name:
-  m_EditorClassIdentifier:
+  m_Name: 
+  m_EditorClassIdentifier: 
   availableMonsterIds:
   - Monster_01
   - Monster_02
