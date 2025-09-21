@@ -41,6 +41,7 @@ public class BattleResolver : MonoBehaviour
 
     private Coroutine _cameraSequenceRoutine;
     private Coroutine _combatRoutine;
+    private bool _hasAppliedThirdCameraFocus;
 
     private const string LogPrefix = "[BattleResolver]";
     private const int FocusSlotMinimumIndex = 4;
