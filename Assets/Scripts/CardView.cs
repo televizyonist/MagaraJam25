@@ -117,6 +117,21 @@ public class CardView : MonoBehaviour
         if (portraitImage == null)
         {
             portraitImage = FindImageUnder("Image");
+
+            if (portraitImage == null)
+            {
+                portraitImage = FindImageUnder("Canvas/Image");
+            }
+
+            if (portraitImage == null)
+            {
+                portraitImage = GetComponentInChildren<Image>(true);
+            }
+
+            if (portraitImage == null)
+            {
+                Debug.LogWarning($"{GetDebugContext()} Unable to automatically find portrait Image component. Please assign it in the inspector.", this);
+            }
         }
     }
 
