@@ -712,6 +712,7 @@ public class HandAreaHover : MonoBehaviour, IPointerEnterHandler, IPointerExitHa
 
         _activePreviewDefinition = sourceView.Definition;
         previewView.SetData(_activePreviewDefinition);
+        EnsureHandCardDisplay(previewView);
         ApplyPreviewTransform();
 
         if (_previewRectTransform != null && !_previewRectTransform.gameObject.activeSelf)
