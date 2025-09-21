@@ -28,7 +28,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 0.013, y: 0.013, z: 0.013}
+  m_LocalScale: {x: 0.01, y: 0.01, z: 0.01}
   m_ConstrainProportionsScale: 1
   m_Children:
   - {fileID: 5532681153265718497}
@@ -72,6 +72,7 @@ MonoBehaviour:
   cardParent: {fileID: 0}
   allowMultipleCards: 0
   dropOffset: {x: 0, y: 0}
+  glowRoot: {fileID: 0}
 --- !u!1 &4299927348270083402
 GameObject:
   m_ObjectHideFlags: 0
@@ -100,8 +101,8 @@ RectTransform:
   m_GameObject: {fileID: 4299927348270083402}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
+  m_LocalScale: {x: 2, y: 2, z: 2}
+  m_ConstrainProportionsScale: 1
   m_Children:
   - {fileID: 673962496404077846}
   m_Father: {fileID: 5641854483612295093}
