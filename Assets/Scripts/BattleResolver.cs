@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Text;
 using UnityEngine;
@@ -19,6 +20,19 @@ public class BattleResolver : MonoBehaviour
 
     [SerializeField] private bool enableDebugLogging = true;
     [SerializeField] private List<CardSlot> slotOverrides = new List<CardSlot>();
+    [Header("Battle UI")]
+    [SerializeField] private GameObject battleButtonRoot;
+    [SerializeField] private GameObject handAreaRoot;
+
+    [Header("Camera Sequence")]
+    [SerializeField] private Transform cameraTransformOverride;
+    [SerializeField] private Transform secondCameraPosition;
+    [SerializeField] private float secondCameraMoveSpeed = 5f;
+    [SerializeField] private float delayBeforeThirdCameraMove = 0.5f;
+    [SerializeField] private Transform thirdCameraPosition;
+    [SerializeField] private float thirdCameraMoveSpeed = 5f;
+
+    private Coroutine _cameraSequenceRoutine;
 
     private const string LogPrefix = "[BattleResolver]";
 
@@ -103,7 +117,109 @@ public class BattleResolver : MonoBehaviour
     public void OnBattleButtonPressed()
     {
         LogDebug("Battle button pressed; executing battle resolution.");
+        HideBattleButton();
+        HideHandArea();
+        StartCameraSequence();
         ExecuteBattle();
+    }
+
+    private void HideBattleButton()
+    {
+        if (battleButtonRoot == null)
+        {
+            return;
+        }
+
+        if (battleButtonRoot.activeSelf)
+        {
+            battleButtonRoot.SetActive(false);
+        }
+    }
+
+    private void HideHandArea()
+    {
+        if (handAreaRoot == null)
+        {
+            return;
+        }
+
+        if (handAreaRoot.activeSelf)
+        {
+            handAreaRoot.SetActive(false);
+        }
+    }
+
+    private void StartCameraSequence()
+    {
+        if (secondCameraPosition == null && thirdCameraPosition == null)
+        {
+            return;
+        }
+
+        if (_cameraSequenceRoutine != null)
+        {
+            StopCoroutine(_cameraSequenceRoutine);
+        }
+
+        _cameraSequenceRoutine = StartCoroutine(RunCameraSequence());
+    }
+
+    private IEnumerator RunCameraSequence()
+    {
+        Transform cameraTransform = ResolveCameraTransform();
+        if (cameraTransform == null)
+        {
+            LogWarning("Battle camera sequence requested but no camera transform is available. Assign a transform in the inspector or ensure a main camera exists in the scene.");
+            yield break;
+        }
+
+        if (secondCameraPosition != null)
+        {
+            yield return MoveTransform(cameraTransform, secondCameraPosition.position, secondCameraMoveSpeed);
+        }
+
+        if (thirdCameraPosition != null)
+        {
+            if (delayBeforeThirdCameraMove > 0f)
+            {
+                yield return new WaitForSeconds(delayBeforeThirdCameraMove);
+            }
+
+            yield return MoveTransform(cameraTransform, thirdCameraPosition.position, thirdCameraMoveSpeed);
+        }
+    }
+
+    private static IEnumerator MoveTransform(Transform target, Vector3 destination, float speed)
+    {
+        if (target == null)
+        {
+            yield break;
+        }
+
+        if (speed <= 0f)
+        {
+            target.position = destination;
+            yield break;
+        }
+
+        while ((target.position - destination).sqrMagnitude > 0.0001f)
+        {
+            target.position = Vector3.MoveTowards(target.position, destination, speed * Time.deltaTime);
+            yield return null;
+        }
+
+        target.position = destination;
+    }
+
+    private Transform ResolveCameraTransform()
+    {
+        if (cameraTransformOverride != null)
+        {
+            return cameraTransformOverride;
+        }
+
+        Camera mainCamera = Camera.main;
+        return mainCamera != null ? mainCamera.transform : null;
     }
 
     private void BuildSlotStates()
