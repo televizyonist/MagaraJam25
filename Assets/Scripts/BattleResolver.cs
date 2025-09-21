@@ -151,8 +151,13 @@ public class BattleResolver : MonoBehaviour
             yield return new WaitForSeconds(combatStartDelay);
         }
 
-        yield return RunCombatLoop();
+        yield return MonsterWar.SelfMonsterWar(this);
         _combatRoutine = null;
+    }
+
+    internal IEnumerator RunSelfMonsterWar()
+    {
+        return RunCombatLoop();
     }
 
     private IEnumerator RunCombatLoop()
