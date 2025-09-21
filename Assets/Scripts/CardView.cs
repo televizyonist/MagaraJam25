@@ -37,6 +37,10 @@ public class CardView : MonoBehaviour
         {
             ApplyDefinition();
         }
+        else
+        {
+            UpdatePortraitSprite();
+        }
     }
 
     private void Reset()
@@ -44,6 +48,7 @@ public class CardView : MonoBehaviour
         _rectTransform = GetComponent<RectTransform>();
         EnsureTextReferences();
         EnsureImageReference();
+        UpdatePortraitSprite();
     }
 
     private void OnValidate()
@@ -56,6 +61,10 @@ public class CardView : MonoBehaviour
             if (_definition != null)
             {
                 ApplyDefinition();
+            }
+            else
+            {
+                UpdatePortraitSprite();
             }
         }
     }
@@ -119,22 +128,51 @@ public class CardView : MonoBehaviour
 
         Sprite sprite = null;
 
-        if (_definition != null)
+        string spriteName = ResolveSpriteName();
+
+        if (!string.IsNullOrEmpty(spriteName))
         {
-            string spriteName = !string.IsNullOrEmpty(_definition.name) ? _definition.name : _definition.id;
+            string folder = string.IsNullOrEmpty(characterSpriteResourceFolder)
+                ? string.Empty
+                : characterSpriteResourceFolder.Trim();
 
-            if (!string.IsNullOrEmpty(spriteName))
-            {
-                string resourcePath = string.IsNullOrEmpty(characterSpriteResourceFolder)
-                    ? spriteName
-                    : $"{characterSpriteResourceFolder}/{spriteName}";
+            string resourcePath = string.IsNullOrEmpty(folder)
+                ? spriteName
+                : $"{folder}/{spriteName}";
 
-                sprite = Resources.Load<Sprite>(resourcePath);
-            }
+            sprite = Resources.Load<Sprite>(resourcePath);
         }
 
         portraitImage.sprite = sprite;
         portraitImage.enabled = sprite != null;
+    }
+
+    private string ResolveSpriteName()
+    {
+        if (_definition != null)
+        {
+            if (!string.IsNullOrEmpty(_definition.name))
+            {
+                return _definition.name.Trim();
+            }
+
+            if (!string.IsNullOrEmpty(_definition.id))
+            {
+                return _definition.id.Trim();
+            }
+        }
+
+        if (nameText != null && !string.IsNullOrEmpty(nameText.text))
+        {
+            return nameText.text.Trim();
+        }
+
+        if (!string.IsNullOrEmpty(gameObject.name))
+        {
+            return gameObject.name.Trim();
+        }
+
+        return null;
     }
 
     private TMP_Text FindTextUnder(string path)
