@@ -1,4 +1,5 @@
 using System;
+using System.Globalization;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -8,6 +9,14 @@ public class CardView : MonoBehaviour
 {
     [SerializeField] private TMP_Text nameText;
     [SerializeField] private TMP_Text familyText;
+    [SerializeField] private TMP_Text attackText;
+    [SerializeField] private TMP_Text healthText;
+    [SerializeField] private TMP_Text armorText;
+    [SerializeField] private TMP_Text extraAttackText;
+    [SerializeField] private TMP_Text aoeText;
+    [SerializeField] private TMP_Text regenerationText;
+    [SerializeField] private TMP_Text luckText;
+    [SerializeField] private TMP_Text scoreText;
     [SerializeField] private Image portraitImage;
     [SerializeField] private string characterSpriteResourceFolder = "Characters";
 
@@ -42,6 +51,8 @@ public class CardView : MonoBehaviour
         {
             UpdatePortraitSprite();
         }
+
+        UpdateStatsText();
     }
 
     private void Reset()
@@ -50,6 +61,7 @@ public class CardView : MonoBehaviour
         EnsureTextReferences();
         EnsureImageReference();
         UpdatePortraitSprite();
+        UpdateStatsText();
     }
 
     private void OnValidate()
@@ -67,6 +79,8 @@ public class CardView : MonoBehaviour
             {
                 UpdatePortraitSprite();
             }
+
+            UpdateStatsText();
         }
     }
 
@@ -96,6 +110,7 @@ public class CardView : MonoBehaviour
             familyText.text = _definition != null ? _definition.GetFamilyDisplayName() : string.Empty;
         }
 
+        UpdateStatsText();
         UpdatePortraitSprite();
     }
 
@@ -109,6 +124,46 @@ public class CardView : MonoBehaviour
         if (familyText == null)
         {
             familyText = FindTextUnder("Canvas/Family");
+        }
+
+        if (attackText == null)
+        {
+            attackText = FindTextUnder("Canvas/Attack");
+        }
+
+        if (healthText == null)
+        {
+            healthText = FindTextUnder("Canvas/Health");
+        }
+
+        if (armorText == null)
+        {
+            armorText = FindTextUnder("Canvas/Armor");
+        }
+
+        if (extraAttackText == null)
+        {
+            extraAttackText = FindTextUnder("Canvas/Extra Attack");
+        }
+
+        if (aoeText == null)
+        {
+            aoeText = FindTextUnder("Canvas/AOE");
+        }
+
+        if (regenerationText == null)
+        {
+            regenerationText = FindTextUnder("Canvas/Regeneration");
+        }
+
+        if (luckText == null)
+        {
+            luckText = FindTextUnder("Canvas/Luck");
+        }
+
+        if (scoreText == null)
+        {
+            scoreText = FindTextUnder("Canvas/Score");
         }
     }
 
@@ -277,6 +332,45 @@ public class CardView : MonoBehaviour
         }
 
         return target.GetComponentInChildren<TMP_Text>(true);
+    }
+
+    private void UpdateStatsText()
+    {
+        EnsureTextReferences();
+
+        CharacterStats stats = _definition != null ? _definition.stats : null;
+        if (stats != null && stats.HasValues)
+        {
+            SetStatText(attackText, stats.attack);
+            SetStatText(healthText, stats.health);
+            SetStatText(armorText, stats.armor);
+            SetStatText(extraAttackText, stats.extraAttack);
+            SetStatText(aoeText, stats.areaDamage);
+            SetStatText(regenerationText, stats.regeneration);
+            SetStatText(luckText, stats.luck);
+            SetStatText(scoreText, stats.score);
+        }
+        else
+        {
+            SetStatText(attackText, null);
+            SetStatText(healthText, null);
+            SetStatText(armorText, null);
+            SetStatText(extraAttackText, null);
+            SetStatText(aoeText, null);
+            SetStatText(regenerationText, null);
+            SetStatText(luckText, null);
+            SetStatText(scoreText, null);
+        }
+    }
+
+    private void SetStatText(TMP_Text text, int? value)
+    {
+        if (text == null)
+        {
+            return;
+        }
+
+        text.text = value.HasValue ? value.Value.ToString(CultureInfo.InvariantCulture) : string.Empty;
     }
 
     private Image FindImageUnder(string path)
