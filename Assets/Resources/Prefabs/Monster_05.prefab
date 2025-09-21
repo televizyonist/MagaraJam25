@@ -141,7 +141,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: 91c21500cdfed3d499147a8b8cbd0351, type: 3}
+  m_Sprite: {fileID: 21300000, guid: a7c2297f7386f6c4190ed772861e95fc, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -396,7 +396,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: 1
+  m_text: 7
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
@@ -530,7 +530,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: 1
+  m_text: 8
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
@@ -610,7 +610,7 @@ GameObject:
   - component: {fileID: 5291616826415902347}
   - component: {fileID: 3307130535967812345}
   m_Layer: 0
-  m_Name: Monster
+  m_Name: Monster_05
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -642,11 +642,11 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 89faa1764ec5412ebab16009342f30b4, type: 3}
-  m_Name:
-  m_EditorClassIdentifier:
-  monsterId: Monster_01
+  m_Name: 
+  m_EditorClassIdentifier: 
+  monsterId: Monster_05
   monstersResourcePath: Data/monsters
-  spriteResourceFolder:
+  spriteResourceFolder: 
   portraitImage: {fileID: 7708072685995986667}
   healthValueText: {fileID: 6546815937503847460}
   attackValueText: {fileID: 2166686395519082865}
