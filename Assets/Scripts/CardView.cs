@@ -343,7 +343,7 @@ public class CardView : MonoBehaviour
         {
             SetStatText(attackText, stats.attack);
             SetStatText(healthText, stats.health);
-            SetStatText(armorText, stats.armor);
+            SetStatText(armorText, stats.armor, hideWhenZero: true);
             SetStatText(extraAttackText, stats.extraAttack);
             SetStatText(aoeText, stats.areaDamage);
             SetStatText(regenerationText, stats.regeneration);
@@ -354,7 +354,7 @@ public class CardView : MonoBehaviour
         {
             SetStatText(attackText, null);
             SetStatText(healthText, null);
-            SetStatText(armorText, null);
+            SetStatText(armorText, null, hideWhenZero: true);
             SetStatText(extraAttackText, null);
             SetStatText(aoeText, null);
             SetStatText(regenerationText, null);
@@ -363,14 +363,55 @@ public class CardView : MonoBehaviour
         }
     }
 
-    private void SetStatText(TMP_Text text, int? value)
+    private void SetStatText(TMP_Text text, int? value, bool hideWhenZero = false)
     {
         if (text == null)
         {
             return;
         }
 
-        text.text = value.HasValue ? value.Value.ToString(CultureInfo.InvariantCulture) : string.Empty;
+        bool hasValue = value.HasValue;
+        int numericValue = value.GetValueOrDefault();
+        bool showValue = hasValue;
+
+        if (hideWhenZero && numericValue <= 0)
+        {
+            showValue = false;
+        }
+
+        if (hideWhenZero)
+        {
+            SetStatDisplayActive(text, showValue);
+        }
+        else
+        {
+            SetStatDisplayActive(text, true);
+        }
+
+        text.text = showValue ? numericValue.ToString(CultureInfo.InvariantCulture) : string.Empty;
+    }
+
+    private void SetStatDisplayActive(TMP_Text text, bool isActive)
+    {
+        if (text == null)
+        {
+            return;
+        }
+
+        Transform displayTransform = text.transform != null && text.transform.parent != null
+            ? text.transform.parent
+            : text.transform;
+
+        if (displayTransform == null)
+        {
+            return;
+        }
+
+        GameObject displayObject = displayTransform.gameObject;
+        if (displayObject.activeSelf != isActive)
+        {
+            displayObject.SetActive(isActive);
+        }
     }
 
     private Image FindImageUnder(string path)
