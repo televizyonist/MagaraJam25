@@ -648,6 +648,7 @@ MonoBehaviour:
   monstersResourcePath: Data/monsters
   spriteResourceFolder:
   randomizeMonsterOnPlay: 1
+  randomizeIntervalSeconds: 1
   randomMonsterIds:
   - Monster_01
   - Monster_02
