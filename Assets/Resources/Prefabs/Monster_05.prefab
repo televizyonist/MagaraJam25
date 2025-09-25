@@ -646,7 +646,14 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   monsterId: Monster_05
   monstersResourcePath: Data/monsters
-  spriteResourceFolder: 
+  spriteResourceFolder:
+  randomizeMonsterOnPlay: 1
+  randomMonsterIds:
+  - Monster_01
+  - Monster_02
+  - Monster_03
+  - Monster_04
+  - Monster_05
   portraitImage: {fileID: 7708072685995986667}
   healthValueText: {fileID: 6546815937503847460}
   attackValueText: {fileID: 2166686395519082865}
