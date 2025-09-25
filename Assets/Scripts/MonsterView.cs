@@ -12,6 +12,15 @@ public class MonsterView : MonoBehaviour
     [SerializeField] private string monsterId = "Monster_01";
     [SerializeField] private string monstersResourcePath = "Data/monsters";
     [SerializeField] private string spriteResourceFolder = string.Empty;
+    [SerializeField] private bool randomizeMonsterOnPlay;
+    [SerializeField] private string[] randomMonsterIds =
+    {
+        "Monster_01",
+        "Monster_02",
+        "Monster_03",
+        "Monster_04",
+        "Monster_05"
+    };
     [SerializeField] private Image portraitImage;
     [SerializeField] private TMP_Text healthValueText;
     [SerializeField] private TMP_Text attackValueText;
@@ -35,12 +44,17 @@ public class MonsterView : MonoBehaviour
     private void Awake()
     {
         EnsureReferences();
+        if (Application.isPlaying)
+        {
+            TryRandomizeMonsterId();
+        }
         ApplyMonsterData();
     }
 
     private void Reset()
     {
         EnsureReferences();
+        EnsureRandomMonsterDefaults();
         ApplyMonsterData();
     }
 
@@ -49,6 +63,7 @@ public class MonsterView : MonoBehaviour
         if (!Application.isPlaying)
         {
             EnsureReferences();
+            EnsureRandomMonsterDefaults();
             ApplyMonsterData();
         }
     }
@@ -198,6 +213,43 @@ public class MonsterView : MonoBehaviour
     {
         SetText(attackValueText, _hasAttackValue ? _currentAttack.ToString() : string.Empty);
         SetText(healthValueText, _hasHealthValue ? _currentHealth.ToString() : string.Empty);
+    }
+
+    private void TryRandomizeMonsterId()
+    {
+        if (!randomizeMonsterOnPlay)
+        {
+            return;
+        }
+
+        EnsureRandomMonsterDefaults();
+        if (randomMonsterIds == null || randomMonsterIds.Length == 0)
+        {
+            Debug.LogWarning("Random monster list is empty; cannot randomize monster id.");
+            return;
+        }
+
+        int index = UnityEngine.Random.Range(0, randomMonsterIds.Length);
+        string selectedId = randomMonsterIds[index];
+        if (string.IsNullOrWhiteSpace(selectedId))
+        {
+            Debug.LogWarning("Random monster selection resulted in an empty id; skipping randomization.");
+            return;
+        }
+
+        selectedId = selectedId.Trim();
+        if (!string.Equals(monsterId, selectedId, StringComparison.Ordinal))
+        {
+            monsterId = selectedId;
+        }
+    }
+
+    private void EnsureRandomMonsterDefaults()
+    {
+        if (randomMonsterIds == null || randomMonsterIds.Length == 0)
+        {
+            randomMonsterIds = new[] { "Monster_01", "Monster_02", "Monster_03", "Monster_04", "Monster_05" };
+        }
     }
 
     private void ResetRuntimeCache()
