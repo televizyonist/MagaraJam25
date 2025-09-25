@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
 using TMPro;
@@ -12,6 +13,16 @@ public class MonsterView : MonoBehaviour
     [SerializeField] private string monsterId = "Monster_01";
     [SerializeField] private string monstersResourcePath = "Data/monsters";
     [SerializeField] private string spriteResourceFolder = string.Empty;
+    [SerializeField] private bool randomizeMonsterOnPlay;
+    [SerializeField] private float randomizeIntervalSeconds = 1f;
+    [SerializeField] private string[] randomMonsterIds =
+    {
+        "Monster_01",
+        "Monster_02",
+        "Monster_03",
+        "Monster_04",
+        "Monster_05"
+    };
     [SerializeField] private Image portraitImage;
     [SerializeField] private TMP_Text healthValueText;
     [SerializeField] private TMP_Text attackValueText;
@@ -32,24 +43,60 @@ public class MonsterView : MonoBehaviour
     private bool _hasAttackValue;
     private bool _hasHealthValue;
 
+    private Coroutine _randomizationCoroutine;
+
     private void Awake()
     {
         EnsureReferences();
+        if (Application.isPlaying)
+        {
+            TryRandomizeMonsterId();
+        }
         ApplyMonsterData();
+    }
+
+    private void OnEnable()
+    {
+        if (Application.isPlaying)
+        {
+            StartRandomizationIfNeeded();
+        }
+    }
+
+    private void OnDisable()
+    {
+        if (Application.isPlaying)
+        {
+            StopRandomizationCoroutine();
+        }
     }
 
     private void Reset()
     {
         EnsureReferences();
+        EnsureRandomMonsterDefaults();
+        EnsureRandomizationInterval();
         ApplyMonsterData();
     }
 
     private void OnValidate()
     {
-        if (!Application.isPlaying)
+        EnsureReferences();
+        EnsureRandomMonsterDefaults();
+        EnsureRandomizationInterval();
+
+        ApplyMonsterData();
+
+        if (Application.isPlaying && isActiveAndEnabled)
         {
-            EnsureReferences();
-            ApplyMonsterData();
+            if (randomizeMonsterOnPlay)
+            {
+                StartRandomizationIfNeeded();
+            }
+            else
+            {
+                StopRandomizationCoroutine();
+            }
         }
     }
 
@@ -198,6 +245,110 @@ public class MonsterView : MonoBehaviour
     {
         SetText(attackValueText, _hasAttackValue ? _currentAttack.ToString() : string.Empty);
         SetText(healthValueText, _hasHealthValue ? _currentHealth.ToString() : string.Empty);
+    }
+
+    private void TryRandomizeMonsterId()
+    {
+        if (!randomizeMonsterOnPlay)
+        {
+            return;
+        }
+
+        EnsureRandomMonsterDefaults();
+        EnsureRandomizationInterval();
+        if (randomMonsterIds == null || randomMonsterIds.Length == 0)
+        {
+            Debug.LogWarning("Random monster list is empty; cannot randomize monster id.");
+            return;
+        }
+
+        string selectedId = GetRandomMonsterId();
+        if (string.IsNullOrWhiteSpace(selectedId))
+        {
+            Debug.LogWarning("Random monster selection resulted in an empty id; skipping randomization.");
+            return;
+        }
+
+        selectedId = selectedId.Trim();
+        if (!string.Equals(monsterId, selectedId, StringComparison.Ordinal))
+        {
+            monsterId = selectedId;
+        }
+    }
+
+    private void EnsureRandomMonsterDefaults()
+    {
+        if (randomMonsterIds == null || randomMonsterIds.Length == 0)
+        {
+            randomMonsterIds = new[] { "Monster_01", "Monster_02", "Monster_03", "Monster_04", "Monster_05" };
+        }
+    }
+
+    private void EnsureRandomizationInterval()
+    {
+        if (randomizeIntervalSeconds <= 0f)
+        {
+            randomizeIntervalSeconds = 1f;
+        }
+    }
+
+    private string GetRandomMonsterId()
+    {
+        if (randomMonsterIds == null || randomMonsterIds.Length == 0)
+        {
+            return null;
+        }
+
+        int index = UnityEngine.Random.Range(0, randomMonsterIds.Length);
+        return randomMonsterIds[index];
+    }
+
+    private void StartRandomizationIfNeeded()
+    {
+        if (!randomizeMonsterOnPlay)
+        {
+            return;
+        }
+
+        EnsureRandomMonsterDefaults();
+        EnsureRandomizationInterval();
+
+        if (randomMonsterIds == null || randomMonsterIds.Length == 0)
+        {
+            Debug.LogWarning("Random monster list is empty; cannot start continuous randomization.");
+            return;
+        }
+
+        if (_randomizationCoroutine != null)
+        {
+            StopCoroutine(_randomizationCoroutine);
+        }
+
+        _randomizationCoroutine = StartCoroutine(RandomizeMonsterContinuously());
+    }
+
+    private void StopRandomizationCoroutine()
+    {
+        if (_randomizationCoroutine != null)
+        {
+            StopCoroutine(_randomizationCoroutine);
+            _randomizationCoroutine = null;
+        }
+    }
+
+    private IEnumerator RandomizeMonsterContinuously()
+    {
+        while (true)
+        {
+            string selectedId = GetRandomMonsterId();
+            if (!string.IsNullOrWhiteSpace(selectedId))
+            {
+                SetMonsterId(selectedId.Trim());
+            }
+
+            EnsureRandomizationInterval();
+            yield return new WaitForSeconds(randomizeIntervalSeconds);
+        }
     }
 
     private void ResetRuntimeCache()
